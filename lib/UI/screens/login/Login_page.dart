@@ -1,6 +1,5 @@
 import 'package:expance_app/UI/CutomWidget/ExText.dart';
 import 'package:expance_app/UI/screens/HomeScreen/HomePage.dart';
-import 'package:expance_app/UI/screens/HomeScreen/statisticPage.dart';
 import 'package:expance_app/UI/screens/login/singUp.dart';
 import 'package:flutter/material.dart';
 
@@ -113,7 +112,8 @@ class _LoginPageState extends State<LoginPage> {
           ),
           ElevatedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => HomePage()));
               },
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
@@ -128,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
                 textColor: Colors.white,
               )),
           SizedBox(
-            height: 30,
+            height: 10,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -149,6 +149,42 @@ class _LoginPageState extends State<LoginPage> {
                     textColor: Color(0xfffb56a2),
                     underline: TextDecoration.underline,
                   ))
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                margin: EdgeInsets.only(
+                  left: 50,right: 5
+                ),
+                width: 140,
+                height: 2,
+                color: Colors.grey,
+              ),
+              Extext(
+                data: "OR",
+                size: 14,
+                fwight: FontWeight.w500,
+                textColor: Color(0xfffb56a2),
+              ),
+              Container(
+                margin: EdgeInsets.only(
+                  left:5,
+                ),
+                width: 140,
+                height: 2,
+                color: Colors.grey,
+              ),
+            ],
+          ),
+SizedBox(height: 40,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Image.asset("Assets/Images/google-color-icon.png",scale: 12,),
+              Image.asset("Assets/Images/facebook-round-color-icon.png",scale: 12,),
+              Image.asset("Assets/Images/apple-icon.png",scale: 11,),
             ],
           )
         ],

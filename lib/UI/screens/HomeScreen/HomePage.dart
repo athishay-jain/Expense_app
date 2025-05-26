@@ -252,7 +252,7 @@ class HomePage extends StatelessWidget {
                           subtitle: Text(mdata1[index]["subtitle"]),
                           trailing: Text(
                             mdata1[index]["expanse"],
-                            style: TextStyle(fontSize: 15, color: Colors.red),
+                            style: TextStyle(fontSize: 15, color: Color(0xfffb56a2)),
                           ),
                         );
                       }),
@@ -264,7 +264,7 @@ class HomePage extends StatelessWidget {
             height: 20,
           ),
           Container(
-            height: 140,
+            height: 200,
             margin: EdgeInsets.symmetric(horizontal: 20),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
@@ -303,7 +303,7 @@ class HomePage extends StatelessWidget {
                   color: Colors.grey,
                 ),
                 SizedBox(
-                  height: 90,
+                  height: 150,
                   width: double.infinity,
                   child: ListView.builder(
                       itemCount: mdata2.length,
@@ -316,7 +316,7 @@ class HomePage extends StatelessWidget {
                           subtitle: Text(mdata2[index]["subtitle"]),
                           trailing: Text(
                             mdata2[index]["expanse"],
-                            style: TextStyle(fontSize: 15, color: Colors.red),
+                            style: TextStyle(fontSize: 15, color: Color(0xfffb56a2)),
                           ),
                         );
                       }),
