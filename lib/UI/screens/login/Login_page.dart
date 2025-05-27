@@ -1,7 +1,11 @@
 import 'package:expance_app/UI/CutomWidget/ExText.dart';
 import 'package:expance_app/UI/screens/HomeScreen/HomePage.dart';
+import 'package:expance_app/UI/screens/login/bloc/user_bloc.dart';
+import 'package:expance_app/UI/screens/login/bloc/user_event.dart';
+import 'package:expance_app/UI/screens/login/bloc/user_state.dart';
 import 'package:expance_app/UI/screens/login/singUp.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -10,6 +14,10 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool ObscureText = true;
+  bool isloading = false;
+
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +60,7 @@ class _LoginPageState extends State<LoginPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 8),
             child: TextField(
+              controller: emailController,
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
                 hintText: "Enter Your Email ",
@@ -75,6 +84,7 @@ class _LoginPageState extends State<LoginPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 8),
             child: TextField(
+              controller: passwordController,
               keyboardType: TextInputType.emailAddress,
               obscureText: ObscureText,
               decoration: InputDecoration(
@@ -93,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                             color: Color(0xfffb56a2),
                           )),
                 label: Text(
-                  "password",
+                  "Password",
                   style: TextStyle(
                       fontFamily: "poppies", fontWeight: FontWeight.bold),
                 ),
@@ -110,23 +120,64 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(
             height: 20,
           ),
-          ElevatedButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => HomePage()));
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18)),
-                padding: EdgeInsets.symmetric(horizontal: 140, vertical: 12),
-                backgroundColor: Color(0xfffb56a2),
-              ),
-              child: Extext(
-                data: "LOGIN",
-                size: 20,
-                fwight: FontWeight.w600,
-                textColor: Colors.white,
-              )),
+          BlocListener<UserBloc, UserState>(
+            listener: (context, state) {
+              if (state is UserLoadingState) {
+                isloading = true;
+                setState(() {
+
+                });
+              }
+              if (state is UserSuccessState) {
+                isloading = false;
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("User Login Successful !!")));
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomePage(),
+                    ));
+              }
+              if (state is UserFailureState) {
+                isloading = false;
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(state.errorMesg)));
+              }
+              setState(() {
+
+              });
+            },
+            child: ElevatedButton(
+                onPressed: () {
+                  context.read<UserBloc>().add(AuthenticateUserEvent(
+                      email: emailController.text,
+                      password: passwordController.text));
+                },
+                style: ElevatedButton.styleFrom(
+                  maximumSize: Size(355, 60),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18)),
+                  padding: EdgeInsets.symmetric(horizontal: 140, vertical: 12),
+                  backgroundColor: Color(0xfffb56a2),
+                ),
+                child:isloading ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                  SizedBox(
+                      height: 15,
+                      width: 15,
+                      child: CircularProgressIndicator(color: Colors.white,)),
+                  SizedBox(width: 5,),
+                  Text("Loading",style: TextStyle(color: Colors.white),),
+                  ],
+                ): Extext(
+                  data: "LOGIN",
+                  size: 20,
+                  fwight: FontWeight.w600,
+                  textColor: Colors.white,
+                )),
+          ),
+
           SizedBox(
             height: 10,
           ),
@@ -155,9 +206,7 @@ class _LoginPageState extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                margin: EdgeInsets.only(
-                  left: 50,right: 5
-                ),
+                margin: EdgeInsets.only(left: 50, right: 5),
                 width: 140,
                 height: 2,
                 color: Colors.grey,
@@ -170,7 +219,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               Container(
                 margin: EdgeInsets.only(
-                  left:5,
+                  left: 5,
                 ),
                 width: 140,
                 height: 2,
@@ -178,13 +227,24 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ],
           ),
-SizedBox(height: 40,),
+          SizedBox(
+            height: 40,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Image.asset("Assets/Images/google-color-icon.png",scale: 12,),
-              Image.asset("Assets/Images/facebook-round-color-icon.png",scale: 12,),
-              Image.asset("Assets/Images/apple-icon.png",scale: 11,),
+              Image.asset(
+                "Assets/Images/google-color-icon.png",
+                scale: 12,
+              ),
+              Image.asset(
+                "Assets/Images/facebook-round-color-icon.png",
+                scale: 12,
+              ),
+              Image.asset(
+                "Assets/Images/apple-icon.png",
+                scale: 11,
+              ),
             ],
           )
         ],

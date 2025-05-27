@@ -5,6 +5,8 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../Models/expense_model.dart';
+
 class Dbhelper {
   Dbhelper._();
 
@@ -77,8 +79,23 @@ Future<bool> checkIfUserExist({required String email})async{
     List<Map<String,dynamic>> mdata = await db.query(Table_user , where: "$user_email = ?", whereArgs: [email]);
    return mdata.isNotEmpty;
 }
-///authenticate
+
+  ///authenticate
+Future<bool>authenticate({required String email , required String password})async{
+    Database db = await GetDb();
+ List<Map<String,dynamic>>mdata= await   db.query(Table_user,where: "$user_email = ? AND $user_password = ?" , whereArgs: [email,password]);
+    return mdata.isNotEmpty;
+}
+
+
+
 ///addexpance
+
+Future<bool>addexpance({required ExpenseModel newexpense})async{
+    Database db = await GetDb();
+    int rowseffected = await db.insert(Table_Expence, newexpense.tomap());
+    return rowseffected>0;
+}
 ///fethall exoance
 ///delete expance
 ///update expance

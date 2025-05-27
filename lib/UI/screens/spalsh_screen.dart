@@ -22,6 +22,7 @@ class _SpashScreenState extends State<SpashScreen> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
         child: Image.asset("Assets/Images/Ic_logo.png",scale: 3,),
       ),

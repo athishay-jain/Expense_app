@@ -291,6 +291,7 @@ class _SignupPageState extends State<SignupPage> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
+                    maximumSize: Size(355, 60),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18)),
                     padding:
@@ -301,18 +302,14 @@ class _SignupPageState extends State<SignupPage> {
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            CircularProgressIndicator(
-                              color: Colors.white,
-                            ),
                             SizedBox(
-                              width: 10,
+                                height: 15,
+                                width: 15,
+                                child: CircularProgressIndicator(color: Colors.white,)),
+                            SizedBox(
+                              width: 5,
                             ),
-                            Extext(
-                              data: "Loading",
-                              size: 15,
-                              fwight: FontWeight.w600,
-                              textColor: Colors.white,
-                            )
+                            Text("Loading",style: TextStyle(color: Colors.white),),
                           ],
                         )
                       : Extext(

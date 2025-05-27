@@ -8,7 +8,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
   UserBloc({required this.dbhelper}) : super(UserIntialState()) {
     on<RegisterUserEvent>((event, emit) async {
-    //  emit(UserLoadingState());
+     emit(UserLoadingState());
       bool olduser =
           await dbhelper.checkIfUserExist(email: event.newUser.user_email);
       if (!olduser) {
@@ -22,6 +22,17 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       else{
         emit(UserFailureState(errorMesg: "Email Already Exists !!"));
       }
+    });
+    on<AuthenticateUserEvent>((event,emit)async{
+      emit(UserLoadingState());
+      bool autho = await dbhelper.authenticate(email: event.email, password: event.password);
+      print("user is $autho");
+      if(autho){
+        emit(UserSuccessState());
+      }else{
+        emit(UserFailureState(errorMesg: "Email or Password is Incorrect"));
+      }
+
     });
   }
 }
