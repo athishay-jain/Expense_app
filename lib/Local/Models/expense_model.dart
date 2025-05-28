@@ -9,7 +9,7 @@ class ExpenseModel {
   String expance_category;
   String expance_date;
   String expence_type;
-  String user_id;
+  int? user_id;
 
   ExpenseModel({
     required this.expance_title,
@@ -19,7 +19,7 @@ class ExpenseModel {
     required this.expance_category,
     required this.expance_date,
     required this.expence_type,
-    required this.user_id,
+    this.user_id,
     this.expence_id,
   });
 

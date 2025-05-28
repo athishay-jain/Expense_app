@@ -56,10 +56,12 @@ class _ToggleSelectorState extends State<ToggleSelector> {
 
 
         */
-class ToggleSelector extends StatefulWidget{
+class ToggleSelector extends StatefulWidget {
+  ToggleSelector({required this.selector, required this.onToggle});
 
-  ToggleSelector({required this.selector});
-   bool selector = true;
+  bool selector;
+  ValueChanged<bool> onToggle;
+
   @override
   State<ToggleSelector> createState() => _ToggleSelectorState();
 }
@@ -68,51 +70,70 @@ class _ToggleSelectorState extends State<ToggleSelector> {
   @override
   void initState() {
     super.initState();
-
   }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return Container(
       height: 35,
-      width: 140,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(50),color: Colors.grey.shade200),
+      width: 130,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(50), color: Colors.grey.shade200),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ElevatedButton(onPressed: (){
-            widget.selector = true;
-             setState(() {
-
-              });
-
-          },
+          ElevatedButton(
+              onPressed: () {
+                widget.onToggle(true);
+                setState(() {});
+              },
               style: ElevatedButton.styleFrom(
-                  foregroundColor: widget.selector?Colors.white : Colors.black,
-                  backgroundColor: widget.selector?Colors.red : Colors.grey.shade200,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(17),
+                      bottomLeft: Radius.circular(17),
+                    ),
+                  ),
+                  foregroundColor:
+                      widget.selector ? Colors.white : Colors.black,
+                  backgroundColor:
+                      widget.selector ? Colors.red : Colors.grey.shade200,
                   elevation: 0,
                   maximumSize: Size(65, 40),
-                  padding: EdgeInsets.symmetric(horizontal: 1,vertical: 1)
-              ),
-              child: Text("Expense",style: TextStyle(fontFamily: "poppies",fontWeight: FontWeight.bold),)),
-          ElevatedButton(onPressed: (){
-            widget.selector = false;
-             setState(() {
-              });
-          },
+                  padding: EdgeInsets.symmetric(horizontal: 1, vertical: 1)),
+              child: Text(
+                "Expense",
+                style: TextStyle(
+                    fontFamily: "poppies", fontWeight: FontWeight.bold),
+              )),
+          ElevatedButton(
+            onPressed: () {
+              widget.onToggle(false);
+              setState(() {});
+            },
             style: ElevatedButton.styleFrom(
-                foregroundColor: widget.selector?Colors.grey:Colors.white,
-                backgroundColor: widget.selector?Colors.grey.shade200:Colors.green,
+                foregroundColor: widget.selector ? Colors.black : Colors.white,
+                backgroundColor:
+                    widget.selector ? Colors.grey.shade200 : Colors.green,
                 elevation: 0,
-                padding: EdgeInsets.symmetric(horizontal: 1,vertical: 1),
-
-                maximumSize: Size(65, 40)
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(17),
+                    bottomRight: Radius.circular(17),
+                  ),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 1, vertical: 1),
+                maximumSize: Size(65, 40)),
+            child: Text(
+              "Income",
+              style:
+                  TextStyle(fontFamily: "poppies", fontWeight: FontWeight.bold),
             ),
-            child: Text("Income",style: TextStyle(fontFamily: "poppies",fontWeight: FontWeight.bold),),),
+          ),
         ],
       ),
-
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:expance_app/Local/Database/Dbhelper.dart';
 
 class UserModel {
-  String? user_id;
+  int? user_id;
   String user_name;
   String user_email;
   String user_password;

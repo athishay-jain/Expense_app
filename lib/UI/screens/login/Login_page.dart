@@ -131,7 +131,8 @@ class _LoginPageState extends State<LoginPage> {
               if (state is UserSuccessState) {
                 isloading = false;
                 ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("User Login Successful !!")));
+                    SnackBar(
+                        content: Text("User Login Successful !!")));
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(

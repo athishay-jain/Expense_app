@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:expance_app/Local/Models/user_model.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../Models/expense_model.dart';
@@ -84,7 +85,13 @@ Future<bool> checkIfUserExist({required String email})async{
 Future<bool>authenticate({required String email , required String password})async{
     Database db = await GetDb();
  List<Map<String,dynamic>>mdata= await   db.query(Table_user,where: "$user_email = ? AND $user_password = ?" , whereArgs: [email,password]);
-    return mdata.isNotEmpty;
+
+ if(mdata.isNotEmpty){
+   SharedPreferences Prefs = await SharedPreferences.getInstance();
+   Prefs.setInt("user",mdata[0][Dbhelper.user_id]);
+   print("User Id From Profs is  : ${Prefs.getInt("user")}");
+ }
+ return mdata.isNotEmpty;
 }
 
 
@@ -93,6 +100,8 @@ Future<bool>authenticate({required String email , required String password})asyn
 
 Future<bool>addexpance({required ExpenseModel newexpense})async{
     Database db = await GetDb();
+    SharedPreferences Prefs = await SharedPreferences.getInstance();
+   newexpense.user_id =  Prefs.getInt("user") ?? 0;
     int rowseffected = await db.insert(Table_Expence, newexpense.tomap());
     return rowseffected>0;
 }

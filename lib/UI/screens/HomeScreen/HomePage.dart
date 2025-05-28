@@ -1,8 +1,11 @@
 import 'package:expance_app/UI/CutomWidget/ExText.dart';
 import 'package:expance_app/UI/screens/HomeScreen/AddExpensePage.dart';
+import 'package:expance_app/UI/screens/HomeScreen/ProfilePage.dart';
 import 'package:expance_app/UI/screens/HomeScreen/entrypage.dart';
 import 'package:expance_app/UI/screens/HomeScreen/statisticPage.dart';
+import 'package:expance_app/UI/screens/login/Login_page.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -17,9 +20,7 @@ List<Widget>navigate =[
   Center(
     child: Text("Notification",style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),),
   ),
-  Center(
-    child: Text("Profile",style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),),
-  ),
+  Profilepage(),
 ];
 
 

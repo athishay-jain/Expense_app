@@ -54,6 +54,7 @@ class EntryPage extends StatelessWidget{
           child: Image.asset("Assets/Images/logo_horizontal.png"),
         ),
         leadingWidth: 100,
+
         title: Padding(
           padding: const EdgeInsets.only(left: 240),
           child: Icon(
