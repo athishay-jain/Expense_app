@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:expance_app/UI/CutomWidget/ExText.dart';
 import 'package:expance_app/UI/screens/HomeScreen/AddExpensePage.dart';
 import 'package:expance_app/UI/screens/HomeScreen/ProfilePage.dart';
@@ -14,15 +16,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int selectednavigation = 0;
-List<Widget>navigate =[
-  EntryPage(),
-  StatisticPage(),
-  Center(
-    child: Text("Notification",style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),),
-  ),
-  Profilepage(),
-];
-
+  List<Widget> navigate = [
+    EntryPage(),
+    StatisticPage(),
+    Center(
+      child: Text(
+        "Notification",
+        style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+      ),
+    ),
+    Profilepage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +38,22 @@ List<Widget>navigate =[
         onPressed: () {
           Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => AddExpense(),
-              ));
+              PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      AddExpense(),
+                  transitionsBuilder:
+                      (contex, animation, secondaryAnimation, child) {
+                    var begin = Offset(0, 1);
+                    var end = Offset.zero;
+                    var curve = Curves.easeInOutCubicEmphasized;
+                    var tween = Tween(begin: begin, end: end)
+                        .chain(CurveTween(curve: curve));
+
+                    return SlideTransition(
+                                          position: animation.drive(tween),
+                                          child: child,
+                                        );
+                  }));
         },
         elevation: 4,
         backgroundColor: Color(0xfffb56a2),
@@ -48,8 +65,16 @@ List<Widget>navigate =[
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home),
+              icon: Image.asset(
+                "Assets/Images/interface_icons/ic_home_outlined.png",
+                scale: 25,
+                color: Colors.grey,
+              ),
+              activeIcon: Image.asset(
+                "Assets/Images/interface_icons/ic_home_filed.png",
+                scale: 25,
+                color: Color(0xfffb56a2),
+              ),
               label: "Home"),
           BottomNavigationBarItem(
             icon: Icon(Icons.analytics_outlined),

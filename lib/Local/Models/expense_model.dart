@@ -1,24 +1,24 @@
 import 'package:expance_app/Local/Database/Dbhelper.dart';
 
 class ExpenseModel {
-  String? expence_id;
+  int? expence_id;
   String expance_title;
   String expance_description;
   String expance_amount;
-  String expance_balance;
-  String expance_category;
+  double? expance_balance;
+  int expance_category;
   String expance_date;
-  String expence_type;
+  int expence_type;
   int? user_id;
 
   ExpenseModel({
     required this.expance_title,
     required this.expance_description,
     required this.expance_amount,
-    required this.expance_balance,
     required this.expance_category,
     required this.expance_date,
     required this.expence_type,
+    this.expance_balance,
     this.user_id,
     this.expence_id,
   });

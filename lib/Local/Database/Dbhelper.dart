@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:expance_app/Local/Models/user_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,7 +29,7 @@ class Dbhelper {
 
   /// expance table column
 
-  static const String expence_id = "id";
+  static const String expence_id = "expense_id";
   static const String expance_title = "title";
   static const String expance_description = "description";
   static const String expance_amount = "amount";
@@ -58,10 +59,12 @@ class Dbhelper {
             "create table $Table_user($user_id integer primary key autoincrement,$user_name text,$user_email text,$user_password text,$user_mobile text)");
 
         /// create expence table
+        /*  db.execute(
+            "create table expense($expence_id integer primary key autoincrement,$user_id integer,$expance_title text,$expance_description text,$expance_amount text,$expance_balance real,$expance_category integer,$expance_date text,$expence_type integer)");*/
+
         db.execute(
             "create table $Table_Expence($expence_id integer primary key autoincrement,$user_id integer,$expance_title text,$expance_description text,$expance_amount text,$expance_balance real,$expance_category integer,$expance_date text,$expence_type integer)");
-      },
-    );
+      }, );
   }
 
   ///events
@@ -98,11 +101,13 @@ Future<bool>authenticate({required String email , required String password})asyn
 
 ///addexpance
 
-Future<bool>addexpance({required ExpenseModel newexpense})async{
+Future<bool>addExpense({required ExpenseModel newexpense})async{
     Database db = await GetDb();
     SharedPreferences Prefs = await SharedPreferences.getInstance();
    newexpense.user_id =  Prefs.getInt("user") ?? 0;
     int rowseffected = await db.insert(Table_Expence, newexpense.tomap());
+    debugPrint("Checking the Last balance logic working or not and the balance is : ${newexpense.expance_balance}");
+
     return rowseffected>0;
 }
 ///fethall exoance
