@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:expance_app/Local/Bloc/expense_bloc.dart';
 import 'package:expance_app/Local/Bloc/expense_event.dart';
@@ -138,6 +137,9 @@ class _AddExpenseState extends State<AddExpense> {
                         if(value == null || value.isEmpty){
                           return "Amount is required";
                         }
+                        else{
+                          return null;
+                        }
                       },
                       keyboardType: TextInputType.number,
                       controller: amountController,
@@ -240,6 +242,8 @@ class _AddExpenseState extends State<AddExpense> {
                       validator: (value){
                         if(value == null || value.isEmpty){
                           return "Description is required";
+                        }else{
+                          return null;
                         }
                       },
                       keyboardType: TextInputType.name,

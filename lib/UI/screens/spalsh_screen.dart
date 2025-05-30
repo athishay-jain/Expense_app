@@ -12,14 +12,17 @@ class SpashScreen extends StatefulWidget{
 
 class _SpashScreenState extends State<SpashScreen> {
   @override
+@override
   void initState() {
-  checklogin();
+    // TODO: implement initState
+    super.initState();
+    checklogin();
   }
   void checklogin()async{
     SharedPreferences Prefs = await SharedPreferences.getInstance();
     int? islogin = Prefs.getInt("user") ??0;
     print("the userId after the logout : ${Prefs.getInt("user")}");
-    if(islogin  == 0){
+    if(islogin > 0){
       Timer(
           Duration(seconds: 2),(){
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(),));
