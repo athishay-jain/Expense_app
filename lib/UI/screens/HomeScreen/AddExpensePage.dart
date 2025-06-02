@@ -19,7 +19,7 @@ class AddExpense extends StatefulWidget {
 
 class _AddExpenseState extends State<AddExpense> {
   bool selector = true;
-  String currentdate = "";
+  DateTime? currentdate;
   TextEditingController amountController = TextEditingController();
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
@@ -34,7 +34,7 @@ class _AddExpenseState extends State<AddExpense> {
     setState(() {});
   }
 
-  void _handelDate(String date) {
+  void _handelDate(DateTime date) {
     currentdate = date;
   }
 
@@ -464,8 +464,8 @@ class _AddExpenseState extends State<AddExpense> {
                             isloading = true;
                             setState(() {});
                           }
-                          if (state is ExpenseSuccefullState) {
-                      //      Timer(Duration(seconds: 10),() => isloading = false,);
+                          if (state is ExpenseLoadedlState) {
+                           isloading = false;
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text("Transaction added"),
@@ -500,18 +500,18 @@ class _AddExpenseState extends State<AddExpense> {
                               if (formKey.currentState!.validate()) {
                                 context.read<ExpenseBloc>().add(AddExpenseEvent(
                                     newExpense: ExpenseModel(
-                                      expance_balance: lastBalance,
+                                      expance_balance: 0,
                                         expance_title: titleController.text,
                                         expance_description:
                                             descriptionController.text,
-                                        expance_amount: amountController.text,
+                                        expance_amount: double.parse(amountController.text),
                                         expance_category: selector
                                             ? AppConstansts
                                                     .expenseCategoryItems[
                                                 selectedCategory]["id"]
                                             : AppConstansts.incomeCategoryItems[
                                                 selectedCategory]["id"],
-                                        expance_date: currentdate,
+                                        expance_date: (currentdate ?? DateTime.now()).millisecondsSinceEpoch.toString(),
                                         expence_type: selector ? 1 : 0)));
                               }
                             },

@@ -122,12 +122,12 @@ class _LoginPageState extends State<LoginPage> {
           ),
           BlocListener<UserBloc, UserState>(
             listener: (context, state) {
-              if (state is UserLoadingState) {
+         /*     if (state is UserLoadingState) {
                 isloading = true;
                 setState(() {
 
                 });
-              }
+              }*/
               if (state is UserSuccessState) {
                 isloading = false;
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -143,12 +143,20 @@ class _LoginPageState extends State<LoginPage> {
                 isloading = false;
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text(state.errorMesg)));
-              }
-              setState(() {
+                setState(() {
 
-              });
+                });
+              }
+
             },
-            child: ElevatedButton(
+            child:isloading ? Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(color: Color(0xfffb56a2),),
+                SizedBox(width: 15,),
+                Text("Loading",style: TextStyle(fontSize:18,color: Colors.black,fontFamily: "Poppins",fontWeight: FontWeight.w500),),
+              ],
+            ): ElevatedButton(
                 onPressed: () {
                   context.read<UserBloc>().add(AuthenticateUserEvent(
                       email: emailController.text,
@@ -161,17 +169,7 @@ class _LoginPageState extends State<LoginPage> {
                   padding: EdgeInsets.symmetric(horizontal: 140, vertical: 12),
                   backgroundColor: Color(0xfffb56a2),
                 ),
-                child:isloading ? Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                  SizedBox(
-                      height: 15,
-                      width: 15,
-                      child: CircularProgressIndicator(color: Colors.white,)),
-                  SizedBox(width: 5,),
-                  Text("Loading",style: TextStyle(color: Colors.white),),
-                  ],
-                ): Extext(
+                child: Extext(
                   data: "LOGIN",
                   size: 20,
                   fwight: FontWeight.w600,

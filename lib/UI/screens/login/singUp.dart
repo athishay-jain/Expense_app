@@ -279,7 +279,14 @@ class _SignupPageState extends State<SignupPage> {
                   setState(() {});
                 }
               },
-              child: ElevatedButton(
+              child: isLoading ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(color: Color(0xfffb56a2),),
+                  SizedBox(width: 15,),
+                  Text("Loading",style: TextStyle(fontSize:18,color: Colors.black,fontFamily: "Poppins",fontWeight: FontWeight.w500),),
+                ],
+              ): ElevatedButton(
                   onPressed: () {
                     if (formkey.currentState!.validate()) {
                       context.read<UserBloc>().add(RegisterUserEvent(
@@ -298,21 +305,7 @@ class _SignupPageState extends State<SignupPage> {
                         EdgeInsets.symmetric(horizontal: 135, vertical: 12),
                     backgroundColor: Color(0xfffb56a2),
                   ),
-                  child: isLoading
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                                height: 15,
-                                width: 15,
-                                child: CircularProgressIndicator(color: Colors.white,)),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text("Loading",style: TextStyle(color: Colors.white),),
-                          ],
-                        )
-                      : Extext(
+                  child: Extext(
                           data: "SIGN UP",
                           size: 20,
                           fwight: FontWeight.w600,

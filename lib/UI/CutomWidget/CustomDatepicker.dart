@@ -5,14 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class CustomDatePicker extends StatefulWidget {
-  ValueChanged<String> onDatechanged;
+  ValueChanged<DateTime> onDatechanged;
   CustomDatePicker({required this.onDatechanged});
   @override
   _CustomDatePickerState createState() => _CustomDatePickerState();
 }
 class _CustomDatePickerState extends State<CustomDatePicker> {
 
-  DateTime selectedDate = DateTime.now(); // Default to current date
+  DateTime selectedDate = DateTime.now();
+  // Default to current date
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -24,7 +25,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
-        widget.onDatechanged(DateFormat("dd/MM/yyyy").format(selectedDate));
+        widget.onDatechanged(selectedDate);
       });
     }
   }
@@ -32,10 +33,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
   @override
   void initState() {
     super.initState();
-    widget.onDatechanged(
-        DateFormat("dd/MM/yyyy").format(selectedDate)
-
-    );
+    widget.onDatechanged(selectedDate);
   }
 
   @override

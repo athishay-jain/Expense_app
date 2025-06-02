@@ -6,3 +6,7 @@ class AddExpenseEvent extends ExpenseEvent{
   ExpenseModel newExpense;
   AddExpenseEvent({required this.newExpense});
 }
+class GetIntialExpense extends ExpenseEvent{
+int filtertype;
+GetIntialExpense({required this.filtertype});
+}

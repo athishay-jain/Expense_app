@@ -63,7 +63,7 @@ class Dbhelper {
             "create table expense($expence_id integer primary key autoincrement,$user_id integer,$expance_title text,$expance_description text,$expance_amount text,$expance_balance real,$expance_category integer,$expance_date text,$expence_type integer)");*/
 
         db.execute(
-            "create table $Table_Expence($expence_id integer primary key autoincrement,$user_id integer,$expance_title text,$expance_description text,$expance_amount text,$expance_balance real,$expance_category integer,$expance_date text,$expence_type integer)");
+            "create table $Table_Expence($expence_id integer primary key autoincrement,$user_id integer,$expance_title text,$expance_description text,$expance_amount real,$expance_balance real,$expance_category integer,$expance_date text,$expence_type integer)");
       }, );
   }
 
@@ -110,7 +110,21 @@ Future<bool>addExpense({required ExpenseModel newexpense})async{
 
     return rowseffected>0;
 }
+
+
 ///fethall exoance
+
+Future<List<ExpenseModel>> fetchExpense()async{
+    SharedPreferences Prefs = await SharedPreferences.getInstance();
+    int userID = Prefs.getInt("user")!;
+    Database db = await GetDb();
+  List<Map<String , dynamic>> mData =await db.query(Table_Expence,where: "$user_id = ?", whereArgs: [userID]);
+  List<ExpenseModel>expenses =[];
+  for(Map<String , dynamic> eachExp in mData){
+    expenses.add(ExpenseModel.frommap(eachExp));
+  }
+  return expenses;
+}
 ///delete expance
 ///update expance
 }

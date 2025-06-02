@@ -4,7 +4,7 @@ class ExpenseModel {
   int? expence_id;
   String expance_title;
   String expance_description;
-  String expance_amount;
+  double expance_amount;
   double? expance_balance;
   int expance_category;
   String expance_date;
