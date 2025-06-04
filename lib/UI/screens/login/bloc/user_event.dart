@@ -10,3 +10,4 @@ class AuthenticateUserEvent extends UserEvent{
   String password;
   AuthenticateUserEvent({required this.email, required this.password});
 }
+class GetIntialUserData extends UserEvent{}

@@ -500,7 +500,7 @@ class _AddExpenseState extends State<AddExpense> {
                               if (formKey.currentState!.validate()) {
                                 context.read<ExpenseBloc>().add(AddExpenseEvent(
                                     newExpense: ExpenseModel(
-                                      expance_balance: 0,
+                                      expance_balance: lastBalance,
                                         expance_title: titleController.text,
                                         expance_description:
                                             descriptionController.text,

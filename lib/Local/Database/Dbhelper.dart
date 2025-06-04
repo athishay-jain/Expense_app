@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:expance_app/Local/Models/user_model.dart';
+import 'package:expance_app/app_constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -104,6 +105,7 @@ Future<bool>authenticate({required String email , required String password})asyn
 Future<bool>addExpense({required ExpenseModel newexpense})async{
     Database db = await GetDb();
     SharedPreferences Prefs = await SharedPreferences.getInstance();
+    Prefs.setDouble(AppConstansts.lastBalance, newexpense.expance_balance??0);
    newexpense.user_id =  Prefs.getInt("user") ?? 0;
     int rowseffected = await db.insert(Table_Expence, newexpense.tomap());
     debugPrint("Checking the Last balance logic working or not and the balance is : ${newexpense.expance_balance}");
@@ -127,4 +129,18 @@ Future<List<ExpenseModel>> fetchExpense()async{
 }
 ///delete expance
 ///update expance
+
+
+///fetchUser
+Future<List<UserModel>> fetchUser()async{
+    Database db = await GetDb();
+    SharedPreferences Prefs = await SharedPreferences.getInstance();
+   int userId= Prefs.getInt("user")??0;
+    List<Map<String,dynamic>> mUser = await db.query(Table_user,where:"$userId = ?",whereArgs: [user_id]);
+    List<UserModel> userData = [];
+    for(Map<String , dynamic> eachUser in mUser){
+      userData.add(UserModel.frommap(eachUser));
+    }
+    return userData;
+}
 }

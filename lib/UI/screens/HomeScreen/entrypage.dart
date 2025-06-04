@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:expance_app/Local/Bloc/expense_bloc.dart';
 import 'package:expance_app/Local/Bloc/expense_event.dart';
 import 'package:expance_app/Local/Bloc/expense_state.dart';
@@ -6,6 +7,7 @@ import 'package:expance_app/UI/CutomWidget/ExText.dart';
 import 'package:expance_app/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EntryPage extends StatefulWidget {
   @override
@@ -13,52 +15,16 @@ class EntryPage extends StatefulWidget {
 }
 
 class _EntryPageState extends State<EntryPage> {
-  List<Map<String, dynamic>> mdata1 = [
-    {
-      "icon": Icons.shopping_bag_outlined,
-      "title": "Shop",
-      "subtitle": "Buy new cloths",
-      "expanse": "-₹2000"
-    },
-    {
-      "icon": Icons.install_mobile_rounded,
-      "title": "Electronic",
-      "subtitle": "buy new iphone 14",
-      "expanse": "-₹90000"
-    },
-    {
-      "icon": Icons.emoji_food_beverage,
-      "title": "Food",
-      "subtitle": "had lunch outside",
-      "expanse": "-₹500"
-    },
-  ];
-
-  List<Map<String, dynamic>> mdata2 = [
-    {
-      "icon": Icons.car_rental_outlined,
-      "title": "Transport",
-      "subtitle": "Trip to Malanga",
-      "expanse": "-₹2000"
-    },
-    {
-      "icon": Icons.tv_rounded,
-      "title": "Electronic",
-      "subtitle": "Buy new Tv",
-      "expanse": "-₹14000"
-    },
-    {
-      "icon": Icons.emoji_food_beverage,
-      "title": "Food",
-      "subtitle": "had lunch outside",
-      "expanse": "-₹500"
-    },
-  ];
-
-  List<String> selectType = ["Date wise", "Monthly", "Yearly"];
+  Map<String, int> selectType = {
+    "Date wise": 1,
+    "Monthly": 2,
+    "Yearly": 3,
+    "Category" : 4,
+  };
 
   String selectedDate = "Date wise";
-  int selectedintType = 2;
+  int? selectedintType = 1;
+  double? lastBalance = 0;
 
   @override
   void initState() {
@@ -66,14 +32,19 @@ class _EntryPageState extends State<EntryPage> {
     super.initState();
     context
         .read<ExpenseBloc>()
-        .add(GetIntialExpense(filtertype: selectedintType));
+        .add(GetIntialExpense(filtertype: selectedintType??1));
+    getBalance();
   }
-
+void getBalance()async{
+    SharedPreferences Prefs = await SharedPreferences.getInstance();
+    lastBalance = await Prefs.getDouble(AppConstansts.lastBalance);
+}
   @override
   Widget build(BuildContext context) {
+
     context
         .read<ExpenseBloc>()
-        .add(GetIntialExpense(filtertype: selectedintType));
+        .add(GetIntialExpense(filtertype: selectedintType??1));
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
@@ -92,6 +63,7 @@ class _EntryPageState extends State<EntryPage> {
       ),
       body: BlocBuilder<ExpenseBloc, ExpenseState>(
         builder: (_, state) {
+          getBalance();
           if (state is ExpenseLoadingState) {
             return Center(
               child: CircularProgressIndicator(
@@ -107,265 +79,304 @@ class _EntryPageState extends State<EntryPage> {
           }
           if (state is ExpenseLoadedlState) {
             var expenseData = state.mExpenses;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 20,
-                ),
-                SizedBox(
-                  height: 70,
-                  width: double.infinity,
-                  child: ListTile(
-                      leading: CircleAvatar(
-                        radius: 22,
-                        child: Image.network(
-                            "https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper-thumbnail.png"),
-                      ),
-                      title: Extext(
-                          data: "Moring", size: 14, fwight: FontWeight.normal),
-                      subtitle: Extext(
-                          data: "Athishay", size: 18, fwight: FontWeight.w600),
-                      trailing: DropdownMenu(
-                          inputDecorationTheme: InputDecorationTheme(
-                            filled: true,
-                            fillColor: Color(0x15fd559e),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide.none),
-                          ),
-                          menuStyle: MenuStyle(
-                            backgroundColor:
-                                WidgetStateProperty.all(Colors.white),
-                          ),
-                          initialSelection: selectedDate,
-                          onSelected: (value) {
-                            selectedDate = value!;
-                          },
-                          dropdownMenuEntries: selectType.map(
-                            (e) {
-                              return DropdownMenuEntry(
-                                value: e,
-                                label: e,
-                              );
-                            },
-                          ).toList())),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  height: 170,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xffb646b5), Color(0xfffb56a2)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 10,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Row(
+
+            return expenseData.isNotEmpty
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 25,
+                      SizedBox(
+                        height: 20,
+                      ),
+                      SizedBox(
+                        height: 70,
+                        width: double.infinity,
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            radius: 22,
+                            child: Image.network(
+                                "https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper-thumbnail.png"),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 20),
-                            child: Extext(
-                              data: "Expanse Total",
+                          title: Extext(
+                              data: "Moring",
+                              size: 14,
+                              fwight: FontWeight.normal),
+                          subtitle: Extext(
+                              data: "Athishay",
                               size: 18,
-                              fwight: FontWeight.w500,
-                              textColor: Colors.white,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 20),
-                            child: Extext(
-                              data: "₹3,734",
-                              size: 40,
-                              fwight: FontWeight.bold,
-                              textColor: Colors.white,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: 20,
-                              ),
-                              Card(
-                                color: Colors.orange.shade500,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6)),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(2),
+                              fwight: FontWeight.w600),
+                          trailing: DropdownButtonHideUnderline(
+                            child: DropdownButton2<int>(
+                              isDense: true,
+                              items: selectType.entries.map((e) {
+                                return DropdownMenuItem(
+                                  value: e.value,
                                   child: Extext(
-                                    data: "+₹240",
-                                    size: 16,
+                                      data: e.key,
+                                      size: 16,
+                                      fwight: FontWeight.w500),
+                                );
+                              }).toList(),
+                              value: selectedintType,
+                              onChanged: (value) {
+                                selectedintType = value;
+                                setState(() {});
+                              },
+                              iconStyleData: IconStyleData(
+                                  icon:
+                                      Icon(Icons.keyboard_arrow_down_rounded)),
+                              buttonStyleData: ButtonStyleData(
+                                height: 40,
+
+                                decoration: BoxDecoration(
+                                  color: Color(0xffFFEDFA),
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [BoxShadow(
+                                    color: Colors.black26,
+                                    blurRadius: 3,
+                                    offset: Offset(0, 2),
+                                  )]
+                                ),
+                                padding: EdgeInsets.symmetric(horizontal: 5),
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                offset: Offset(0, -5),
+
+                                decoration: BoxDecoration(
+                                    color:Color(0xffFFEDFA),
+                                    borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(20),
+                                        bottomRight: Radius.circular(20),
+                                        topRight: Radius.circular(5),
+                                        topLeft: Radius.circular(5))),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        height: 170,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Color(0xffb646b5), Color(0xfffb56a2)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 10,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: 25,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 20),
+                                  child: Extext(
+                                    data: "Expanse Total",
+                                    size: 18,
                                     fwight: FontWeight.w500,
                                     textColor: Colors.white,
                                   ),
                                 ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 20),
+                                  child: Extext(
+                                    data: "₹${lastBalance??0}",
+                                    size: 40,
+                                    fwight: FontWeight.bold,
+                                    textColor: Colors.white,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                              /*  Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    Card(
+                                      color: Colors.orange.shade500,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(6)),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(2),
+                                        child: Extext(
+                                          data: "+₹240",
+                                          size: 16,
+                                          fwight: FontWeight.w500,
+                                          textColor: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                    Extext(
+                                      data: "Then last Month",
+                                      size: 15,
+                                      fwight: FontWeight.w500,
+                                      textColor: Colors.white,
+                                    )
+                                  ],
+                                )*/
+                              ],
+                            ),
+                           Spacer(),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 30),
+                              child: Image.asset(
+                                "Assets/Images/ic_budget.png",
+                                scale: 4,
                               ),
-                              Extext(
-                                data: "Then last Month",
-                                size: 15,
-                                fwight: FontWeight.w500,
-                                textColor: Colors.white,
-                              )
-                            ],
-                          )
-                        ],
+                            )
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20, left: 20),
+                        child: Extext(
+                            data: "Expanse List",
+                            size: 27,
+                            fwight: FontWeight.w500),
                       ),
                       SizedBox(
-                        width: 10,
+                        height: 15,
                       ),
-                      Image.asset(
-                        "Assets/Images/ic_budget.png",
-                        scale: 4,
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20, left: 20),
-                  child: Extext(
-                      data: "Expanse List", size: 27, fwight: FontWeight.w500),
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                Expanded(
-                  child: ListView.builder(
-                      itemCount: expenseData.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          width: double.infinity,
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.grey, width: 1),
-                          ),
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  Extext(
-                                      data: expenseData[index].title,
-                                      size: 17,
-                                      fwight: FontWeight.w500),
-                                  Spacer(),
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 18),
-                                    child: expenseData[index].bal < 0
-                                        ? Extext(
-                                            data: expenseData[index]
-                                                .bal
-                                                .toString(),
+                      Expanded(
+                        child: ListView.builder(
+                            itemCount: expenseData.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                width: double.infinity,
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border:
+                                      Border.all(color: Colors.grey, width: 1),
+                                ),
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Extext(
+                                            data: expenseData[index].title,
                                             size: 17,
-                                            fwight: FontWeight.w500,
-                                            textColor: Colors.red.shade400,
-                                          )
-                                        : Extext(
-                                            data: expenseData[index]
-                                                .bal
-                                                .toString(),
-                                            size: 17,
-                                            fwight: FontWeight.w500,
-                                            textColor: Colors.green,
-                                          ),
-                                  )
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Container(
-                                width: 340,
-                                height: 1,
-                                color: Colors.grey,
-                              ),
-                              ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount:
-                                      expenseData[index].allExpense.length,
-                                  itemBuilder: (_, cindex) {
-                                    return ListTile(
-                                      leading: expenseData[index]
-                                                  .allExpense[cindex]
-                                                  .expence_type ==
-                                              1
-                                          ? Image.asset(
-                                              "${AppConstansts.expenseCategoryItems[expenseData[index].allExpense[cindex].expance_category]["icon"]}",
-                                              scale: 10,
-                                            )
-                                          : Image.asset(
-                                              "${AppConstansts.incomeCategoryItems[expenseData[index].allExpense[cindex].expance_category]["icon"]}",
-                                              scale: 10,
-                                            ),
-                                      title: Text(expenseData[index]
-                                          .allExpense[cindex]
-                                          .expance_title),
-                                      subtitle: Text(expenseData[index]
-                                          .allExpense[cindex]
-                                          .expance_description),
-                                      trailing: expenseData[index]
-                                                  .allExpense[cindex]
-                                                  .expence_type ==
-                                              1
-                                          ? Text(
-                                              expenseData[index]
-                                                  .allExpense[cindex]
-                                                  .expance_amount
-                                                  .toString(),
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  color: Color(0xfffb56a2)),
-                                            )
-                                          : Text(
-                                              expenseData[index]
-                                                  .allExpense[cindex]
-                                                  .expance_amount
-                                                  .toString(),
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  color: Colors.green),
-                                            ),
-                                    );
-                                  })
-                            ],
-                          ),
-                        );
-                      }),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                /* Container(
+                                            fwight: FontWeight.w500),
+                                        Spacer(),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 18),
+                                          child: expenseData[index].bal < 0
+                                              ? Extext(
+                                                  data: expenseData[index]
+                                                      .bal
+                                                      .toString(),
+                                                  size: 17,
+                                                  fwight: FontWeight.w500,
+                                                  textColor:
+                                                      Colors.red.shade400,
+                                                )
+                                              : Extext(
+                                                  data: expenseData[index]
+                                                      .bal
+                                                      .toString(),
+                                                  size: 17,
+                                                  fwight: FontWeight.w500,
+                                                  textColor: Colors.green,
+                                                ),
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Container(
+                                      width: 340,
+                                      height: 1,
+                                      color: Colors.grey,
+                                    ),
+                                    ListView.builder(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemCount: expenseData[index]
+                                            .allExpense
+                                            .length,
+                                        itemBuilder: (_, cindex) {
+                                          return ListTile(
+                                            leading: expenseData[index]
+                                                        .allExpense[cindex]
+                                                        .expence_type ==
+                                                    1
+                                                ? Image.asset(
+                                                    "${AppConstansts.expenseCategoryItems[expenseData[index].allExpense[cindex].expance_category]["icon"]}",
+                                                    scale: 10,
+                                                  )
+                                                : Image.asset(
+                                                    "${AppConstansts.incomeCategoryItems[expenseData[index].allExpense[cindex].expance_category]["icon"]}",
+                                                    scale: 10,
+                                                  ),
+                                            title: Text(expenseData[index]
+                                                .allExpense[cindex]
+                                                .expance_title),
+                                            subtitle: Text(expenseData[index]
+                                                .allExpense[cindex]
+                                                .expance_description),
+                                            trailing: expenseData[index]
+                                                        .allExpense[cindex]
+                                                        .expence_type ==
+                                                    1
+                                                ? Text(
+                                                    expenseData[index]
+                                                        .allExpense[cindex]
+                                                        .expance_amount
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        color:
+                                                            Color(0xfffb56a2)),
+                                                  )
+                                                : Text(
+                                                    expenseData[index]
+                                                        .allExpense[cindex]
+                                                        .expance_amount
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        color: Colors.green),
+                                                  ),
+                                          );
+                                        })
+                                  ],
+                                ),
+                              );
+                            }),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      /* Container(
                 height: 200,
                 margin: EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
@@ -427,8 +438,14 @@ class _EntryPageState extends State<EntryPage> {
                   ],
                 ),
               ),*/
-              ],
-            );
+                    ],
+                  )
+                : Center(
+                    child: Extext(
+                        data: "No Translation Found",
+                        size: 25,
+                        fwight: FontWeight.w600),
+                  );
           }
           return Container(
             child: Center(

@@ -43,6 +43,7 @@ dependencies:
   shared_preferences: ^2.5.3
   intl: ^0.20.2
   keyboard_avoider: ^0.2.0
+  dropdown_button2: ^2.3.9
 
 
 flutter_native_splash:
