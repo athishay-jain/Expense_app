@@ -19,12 +19,13 @@ class _EntryPageState extends State<EntryPage> {
     "Date wise": 1,
     "Monthly": 2,
     "Yearly": 3,
-    "Category" : 4,
+    "Category": 4,
   };
 
   String selectedDate = "Date wise";
   int? selectedintType = 1;
   double? lastBalance = 0;
+  bool showlastexp = true;
 
   @override
   void initState() {
@@ -32,19 +33,20 @@ class _EntryPageState extends State<EntryPage> {
     super.initState();
     context
         .read<ExpenseBloc>()
-        .add(GetIntialExpense(filtertype: selectedintType??1));
+        .add(GetIntialExpense(filtertype: selectedintType ?? 1));
     getBalance();
   }
-void getBalance()async{
+
+  void getBalance() async {
     SharedPreferences Prefs = await SharedPreferences.getInstance();
     lastBalance = await Prefs.getDouble(AppConstansts.lastBalance);
-}
+  }
+
   @override
   Widget build(BuildContext context) {
-
     context
         .read<ExpenseBloc>()
-        .add(GetIntialExpense(filtertype: selectedintType??1));
+        .add(GetIntialExpense(filtertype: selectedintType ?? 1));
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
@@ -79,7 +81,7 @@ void getBalance()async{
           }
           if (state is ExpenseLoadedlState) {
             var expenseData = state.mExpenses;
-
+            var expLastIndex = expenseData.length - 1;
             return expenseData.isNotEmpty
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,23 +128,22 @@ void getBalance()async{
                                       Icon(Icons.keyboard_arrow_down_rounded)),
                               buttonStyleData: ButtonStyleData(
                                 height: 40,
-
                                 decoration: BoxDecoration(
-                                  color: Color(0xffFFEDFA),
-                                  borderRadius: BorderRadius.circular(10),
-                                  boxShadow: [BoxShadow(
-                                    color: Colors.black26,
-                                    blurRadius: 3,
-                                    offset: Offset(0, 2),
-                                  )]
-                                ),
+                                    color: Color(0xffFFEDFA),
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black26,
+                                        blurRadius: 3,
+                                        offset: Offset(0, 2),
+                                      )
+                                    ]),
                                 padding: EdgeInsets.symmetric(horizontal: 5),
                               ),
                               dropdownStyleData: DropdownStyleData(
                                 offset: Offset(0, -5),
-
                                 decoration: BoxDecoration(
-                                    color:Color(0xffFFEDFA),
+                                    color: Color(0xffFFEDFA),
                                     borderRadius: BorderRadius.only(
                                         bottomLeft: Radius.circular(20),
                                         bottomRight: Radius.circular(20),
@@ -175,8 +176,84 @@ void getBalance()async{
                           ],
                         ),
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Column(
+                            selectedintType == 4 ?Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      height: 25,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 20),
+                                      child: Extext(
+                                        data: "Total Transaction",
+                                        size: 18,
+                                        fwight: FontWeight.w500,
+                                        textColor: Colors.white,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 20),
+                                      child: Extext(
+                                        data: /*"₹${expenseData[expLastIndex].bal}"*/
+                                            "₹${TotalExpense(
+                                          lastbla: lastBalance!,
+                                          expensedata: expenseData,
+                                        )}",
+                                        size: 40,
+                                        fwight: FontWeight.bold,
+                                        textColor: Colors.white,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Visibility(
+                                        visible: showlastexp,
+                                        child: Row(
+                                          children: [
+                                            SizedBox(
+                                              width: 20,
+                                            ),
+                                            Card(
+                                              color: Colors.orange.shade500,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(6)),
+                                              child: Padding(
+                                                padding: const EdgeInsets.symmetric(
+                                                    horizontal: 8, vertical: 2),
+                                                child: Extext(
+                                                  data: lastmonthEx(
+                                                      expensedata: expenseData),
+                                                  size: 16,
+                                                  fwight: FontWeight.w500,
+                                                  textColor: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                            Extext(
+                                              data: "Then Last",
+                                              size: 13,
+                                              fwight: FontWeight.w500,
+                                              textColor: Colors.white,
+                                            ),
+                                          ],
+                                        ))
+                                  ],
+                                ),
+
+                                Image.asset("Assets/Images/ic_budget.png",scale: 4,),
+
+                              ],
+                            ):Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(
@@ -185,7 +262,7 @@ void getBalance()async{
                                 Padding(
                                   padding: const EdgeInsets.only(left: 20),
                                   child: Extext(
-                                    data: "Expanse Total",
+                                    data: "Total Expense",
                                     size: 18,
                                     fwight: FontWeight.w500,
                                     textColor: Colors.white,
@@ -197,8 +274,12 @@ void getBalance()async{
                                 Padding(
                                   padding: const EdgeInsets.only(left: 20),
                                   child: Extext(
-                                    data: "₹${lastBalance??0}",
-                                    size: 40,
+                                    data: /*"₹${expenseData[expLastIndex].bal}"*/
+                                    "₹${TotalExpense(
+                                      lastbla: lastBalance!,
+                                      expensedata: expenseData,
+                                    )}",
+                                    size: 30,
                                     fwight: FontWeight.bold,
                                     textColor: Colors.white,
                                   ),
@@ -206,44 +287,114 @@ void getBalance()async{
                                 SizedBox(
                                   height: 10,
                                 ),
-                              /*  Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                    Card(
-                                      color: Colors.orange.shade500,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
+                                Visibility(
+                                    visible: showlastexp,
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Card(
+                                          color: Colors.orange.shade500,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
                                               BorderRadius.circular(6)),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(2),
-                                        child: Extext(
-                                          data: "+₹240",
-                                          size: 16,
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 2),
+                                            child: Extext(
+                                              data: lastmonthEx(
+                                                  expensedata: expenseData),
+                                              size: 16,
+                                              fwight: FontWeight.w500,
+                                              textColor: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                        Extext(
+                                          data: "Then Last",
+                                          size: 13,
                                           fwight: FontWeight.w500,
                                           textColor: Colors.white,
                                         ),
-                                      ),
-                                    ),
-                                    Extext(
-                                      data: "Then last Month",
-                                      size: 15,
-                                      fwight: FontWeight.w500,
-                                      textColor: Colors.white,
-                                    )
-                                  ],
-                                )*/
+                                      ],
+                                    ))
                               ],
                             ),
-                           Spacer(),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 30),
-                              child: Image.asset(
-                                "Assets/Images/ic_budget.png",
-                                scale: 4,
+                            Visibility(
+                              visible: selectedintType! < 4,
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      height: 25,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 20),
+                                      child: Extext(
+                                        data: "Total Income",
+                                        size: 18,
+                                        fwight: FontWeight.w500,
+                                        textColor: Colors.white,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 20),
+                                      child: Extext(
+                                        data: /*"₹${expenseData[expLastIndex].bal}"*/
+                                            "₹${TotalIncome(
+                                          lastbla: lastBalance!,
+                                          expensedata: expenseData,
+                                        )}",
+                                        size: 30,
+                                        fwight: FontWeight.bold,
+                                        textColor: Colors.white,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Visibility(
+                                      visible: showlastexp,
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Card(
+                                            color: Colors.orange.shade500,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(6)),
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 2),
+                                              child: Extext(
+                                                data: lastmonthIn(
+                                                    expensedata: expenseData),
+                                                size: 16,
+                                                fwight: FontWeight.w500,
+                                                textColor: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                          Extext(
+                                            data: "Then Last",
+                                            size: 13,
+                                            fwight: FontWeight.w500,
+                                            textColor: Colors.white,
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -457,5 +608,73 @@ void getBalance()async{
         },
       ),
     );
+  }
+
+  String TotalExpense({
+    required double lastbla,
+    required var expensedata,
+  }) {
+    var expLastIndex = expensedata.length - 1;
+    if (selectedintType == 4) {
+      return lastbla.toString();
+    } else {
+      num result = expensedata[expLastIndex].expense;
+      return result.abs().toInt().toString();
+    }
+  }
+
+  String TotalIncome({
+    required double lastbla,
+    required var expensedata,
+  }) {
+    var expLastIndex = expensedata.length - 1;
+    if (selectedintType == 4) {
+      return lastbla.toString();
+    } else {
+      num result = expensedata[expLastIndex].income;
+      return result.abs().toInt().toString();
+    }
+  }
+
+  String lastmonthEx({required var expensedata}) {
+    var expLastIndex = expensedata.length - 1;
+    var explIndex = expensedata.length - 2;
+    if (selectedintType == 4) {
+      showlastexp = false;
+      return "";
+    } else if (explIndex < 0 || explIndex < 0) {
+      showlastexp = false;
+      return "No data";
+    } else {
+      showlastexp = true;
+      num lastExp = expensedata[explIndex].expense;
+      num Exp = expensedata[expLastIndex].expense;
+      num result = (Exp.abs() - lastExp.abs());
+      // return "$result";
+      return result < 0
+          ? result.toInt().toString()
+          : "+${result.toInt().toString()}";
+    }
+  }
+
+  String lastmonthIn({required var expensedata}) {
+    var expLastIndex = expensedata.length - 1;
+    var explIndex = expensedata.length - 2;
+    if (selectedintType == 4) {
+      showlastexp = false;
+      return "";
+    } else if (explIndex < 0 || explIndex < 0) {
+      showlastexp = false;
+      return "No data";
+    } else {
+      showlastexp = true;
+      num lastExp = expensedata[explIndex].income;
+      num Exp = expensedata[expLastIndex].income;
+      num result = (Exp.abs() - lastExp.abs());
+      // return "$result";
+      return result < 0
+          ? result.toInt().toString()
+          : "+${result.toInt().toString()}";
+    }
   }
 }

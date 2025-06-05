@@ -56,6 +56,8 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
 */
       for (Map<String, dynamic> eachCat in AppConstansts.expenseCategoryItems) {
         num bal = 0.0;
+        num expense = 0;
+        num income = 0;
         List<ExpenseModel> eachCatExp = [];
         for (ExpenseModel eachExp in mExp) {
           if (eachExp.expance_category == eachCat["id"]) {
@@ -64,19 +66,23 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
             }
 
             if (eachExp.expence_type == 1) {
+              expense -=eachExp.expance_amount;
               bal -= eachExp.expance_amount;
             } else {
+              income += eachExp.expance_amount;
               bal += eachExp.expance_amount;
             }
           }
         }
         if (eachCatExp.isNotEmpty) {
           FiltredData.add(FilterdExpenseModel(
-              title: eachCat["title"], allExpense: eachCatExp, bal: bal));
+              title: eachCat["title"], allExpense: eachCatExp, bal: bal,income: income,expense: expense));
         }
       }
       for (Map<String, dynamic> eachCat in AppConstansts.incomeCategoryItems) {
         num bal = 0.0;
+        num expense = 0;
+        num income = 0;
         List<ExpenseModel> eachCatExp = [];
         for (ExpenseModel eachExp in mExp) {
           if (eachExp.expance_category == eachCat["id"]) {
@@ -85,15 +91,17 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
             }
 
             if (eachExp.expence_type == 1) {
+              expense -=eachExp.expance_amount;
               bal -= eachExp.expance_amount;
             } else {
+              income += eachExp.expance_amount;
               bal += eachExp.expance_amount;
             }
           }
         }
         if (eachCatExp.isNotEmpty) {
           FiltredData.add(FilterdExpenseModel(
-              title: eachCat["title"], allExpense: eachCatExp, bal: bal));
+              title: eachCat["title"], allExpense: eachCatExp, bal: bal,income: income,expense: expense));
         }
       }
     } else {
@@ -110,7 +118,8 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
       for (String eachDate in uniqueDates) {
         num bal = 0.0;
         List<ExpenseModel> selectedExpense = [];
-
+        num expense = 0;
+        num income = 0;
         for (ExpenseModel eachExp in mExp) {
           String expeDate = df.format(DateTime.fromMillisecondsSinceEpoch(
               int.parse(eachExp.expance_date)));
@@ -119,15 +128,17 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
             selectedExpense.add(eachExp);
 
             if (eachExp.expence_type == 1) {
+              expense -=eachExp.expance_amount;
               bal -= eachExp.expance_amount;
             } else {
+              income += eachExp.expance_amount;
               bal += eachExp.expance_amount;
             }
           }
         }
         print(" $eachDate : $bal ${selectedExpense.length}");
         FiltredData.add(FilterdExpenseModel(
-            title: eachDate, allExpense: selectedExpense, bal: bal));
+            title: eachDate, allExpense: selectedExpense, bal: bal,income: income,expense: expense));
       }
     }
 
