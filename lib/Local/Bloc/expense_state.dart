@@ -7,8 +7,8 @@ class ExpenseLoadedlState extends ExpenseState{
   List<FilterdExpenseModel> mExpenses;
   ExpenseLoadedlState({required this.mExpenses});
 }
-class ExpenseErrorStete extends ExpenseState{
+class ExpenseErrorState extends ExpenseState{
   String errorMes;
 
-  ExpenseErrorStete({required this.errorMes});
+  ExpenseErrorState({required this.errorMes});
 }

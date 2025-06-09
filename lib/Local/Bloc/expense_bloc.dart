@@ -153,7 +153,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
         var expenses = await dbhelper.fetchExpense();
         emit(ExpenseLoadedlState(mExpenses: filterExpenses(mExp: expenses)));
       } else {
-        emit(ExpenseErrorStete(
+        emit(ExpenseErrorState(
             errorMes: "Something went wrong transaction didn't add"));
       }
     });

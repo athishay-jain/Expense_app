@@ -24,7 +24,7 @@ class _EntryPageState extends State<EntryPage> {
 
   String selectedDate = "Date wise";
   int? selectedintType = 1;
-  double? lastBalance = 0;
+  double lastBalance = 0;
   bool showlastexp = true;
 
   @override
@@ -39,7 +39,7 @@ class _EntryPageState extends State<EntryPage> {
 
   void getBalance() async {
     SharedPreferences Prefs = await SharedPreferences.getInstance();
-    lastBalance = await Prefs.getDouble(AppConstansts.lastBalance);
+    lastBalance = await Prefs.getDouble(AppConstansts.lastBalance) ?? 0;
   }
 
   @override
@@ -73,7 +73,7 @@ class _EntryPageState extends State<EntryPage> {
               ),
             );
           }
-          if (state is ExpenseErrorStete) {
+          if (state is ExpenseErrorState) {
             return Center(
               child: Extext(
                   data: state.errorMes, size: 25, fwight: FontWeight.bold),
@@ -204,7 +204,7 @@ class _EntryPageState extends State<EntryPage> {
                                       child: Extext(
                                         data: /*"₹${expenseData[expLastIndex].bal}"*/
                                             "₹${TotalExpense(
-                                          lastbla: lastBalance!,
+                                          lastbla: lastBalance,
                                           expensedata: expenseData,
                                         )}",
                                         size: 40,
@@ -276,7 +276,7 @@ class _EntryPageState extends State<EntryPage> {
                                   child: Extext(
                                     data: /*"₹${expenseData[expLastIndex].bal}"*/
                                     "₹${TotalExpense(
-                                      lastbla: lastBalance!,
+                                      lastbla: lastBalance,
                                       expensedata: expenseData,
                                     )}",
                                     size: 30,
@@ -348,7 +348,7 @@ class _EntryPageState extends State<EntryPage> {
                                       child: Extext(
                                         data: /*"₹${expenseData[expLastIndex].bal}"*/
                                             "₹${TotalIncome(
-                                          lastbla: lastBalance!,
+                                          lastbla: lastBalance,
                                           expensedata: expenseData,
                                         )}",
                                         size: 30,
@@ -614,7 +614,7 @@ class _EntryPageState extends State<EntryPage> {
     required double lastbla,
     required var expensedata,
   }) {
-    var expLastIndex = expensedata.length - 1;
+    var expLastIndex = 0;
     if (selectedintType == 4) {
       return lastbla.toString();
     } else {
@@ -627,7 +627,7 @@ class _EntryPageState extends State<EntryPage> {
     required double lastbla,
     required var expensedata,
   }) {
-    var expLastIndex = expensedata.length - 1;
+    var expLastIndex = 0;
     if (selectedintType == 4) {
       return lastbla.toString();
     } else {
@@ -637,12 +637,12 @@ class _EntryPageState extends State<EntryPage> {
   }
 
   String lastmonthEx({required var expensedata}) {
-    var expLastIndex = expensedata.length - 1;
-    var explIndex = expensedata.length - 2;
+    var expLastIndex = 0;
+    var explIndex = 1;
     if (selectedintType == 4) {
       showlastexp = false;
       return "";
-    } else if (explIndex < 0 || explIndex < 0) {
+    } else if (expensedata.length == 1) {
       showlastexp = false;
       return "No data";
     } else {
@@ -658,12 +658,12 @@ class _EntryPageState extends State<EntryPage> {
   }
 
   String lastmonthIn({required var expensedata}) {
-    var expLastIndex = expensedata.length - 1;
-    var explIndex = expensedata.length - 2;
+    var expLastIndex = 0;
+    var explIndex = 1;
     if (selectedintType == 4) {
       showlastexp = false;
       return "";
-    } else if (explIndex < 0 || explIndex < 0) {
+    } else if (expensedata.length == 1) {
       showlastexp = false;
       return "No data";
     } else {

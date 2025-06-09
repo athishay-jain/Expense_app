@@ -473,7 +473,7 @@ class _AddExpenseState extends State<AddExpense> {
                             );
                             Navigator.pop(context);
                           }
-                          if (state is ExpenseErrorStete) {
+                          if (state is ExpenseErrorState) {
                             isloading = false;
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(

@@ -44,6 +44,7 @@ dependencies:
   intl: ^0.20.2
   keyboard_avoider: ^0.2.0
   dropdown_button2: ^2.3.9
+  fl_chart: ^0.71.0
 
 
 flutter_native_splash:

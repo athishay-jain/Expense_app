@@ -65,82 +65,89 @@ class Dbhelper {
 
         db.execute(
             "create table $Table_Expence($expence_id integer primary key autoincrement,$user_id integer,$expance_title text,$expance_description text,$expance_amount real,$expance_balance real,$expance_category integer,$expance_date text,$expence_type integer)");
-      }, );
+      },
+    );
   }
 
   ///events
   ///create user
 
-  Future<bool> createUser({required UserModel user})async{
+  Future<bool> createUser({required UserModel user}) async {
     var db = await GetDb();
- int rowseffected = await db.insert(Table_user, user.tomap());
- return rowseffected>0;
-
+    int rowseffected = await db.insert(Table_user, user.tomap());
+    return rowseffected > 0;
   }
-///check user if already exist
 
-Future<bool> checkIfUserExist({required String email})async{
-    Database db= await GetDb();
-    List<Map<String,dynamic>> mdata = await db.query(Table_user , where: "$user_email = ?", whereArgs: [email]);
-   return mdata.isNotEmpty;
-}
+  ///check user if already exist
+
+  Future<bool> checkIfUserExist({required String email}) async {
+    Database db = await GetDb();
+    List<Map<String, dynamic>> mdata = await db
+        .query(Table_user, where: "$user_email = ?", whereArgs: [email]);
+    return mdata.isNotEmpty;
+  }
 
   ///authenticate
-Future<bool>authenticate({required String email , required String password})async{
+  Future<bool> authenticate(
+      {required String email, required String password}) async {
     Database db = await GetDb();
- List<Map<String,dynamic>>mdata= await   db.query(Table_user,where: "$user_email = ? AND $user_password = ?" , whereArgs: [email,password]);
+    List<Map<String, dynamic>> mdata = await db.query(Table_user,
+        where: "$user_email = ? AND $user_password = ?",
+        whereArgs: [email, password]);
 
- if(mdata.isNotEmpty){
-   SharedPreferences Prefs = await SharedPreferences.getInstance();
-   Prefs.setInt("user",mdata[0][Dbhelper.user_id]);
-   print("User Id From Profs is  : ${Prefs.getInt("user")}");
- }
- return mdata.isNotEmpty;
-}
+    if (mdata.isNotEmpty) {
+      SharedPreferences Prefs = await SharedPreferences.getInstance();
+      Prefs.setInt("user", mdata[0][Dbhelper.user_id]);
+      print("User Id From Profs is  : ${Prefs.getInt("user")}");
+    }
+    return mdata.isNotEmpty;
+  }
 
+  ///addexpance
 
-
-///addexpance
-
-Future<bool>addExpense({required ExpenseModel newexpense})async{
+  Future<bool> addExpense({required ExpenseModel newexpense}) async {
     Database db = await GetDb();
     SharedPreferences Prefs = await SharedPreferences.getInstance();
-    Prefs.setDouble(AppConstansts.lastBalance, newexpense.expance_balance??0);
-   newexpense.user_id =  Prefs.getInt("user") ?? 0;
+    Prefs.setDouble(AppConstansts.lastBalance, newexpense.expance_balance ?? 0);
+    newexpense.user_id = Prefs.getInt("user") ?? 0;
     int rowseffected = await db.insert(Table_Expence, newexpense.tomap());
-    debugPrint("Checking the Last balance logic working or not and the balance is : ${newexpense.expance_balance}");
+    debugPrint(
+        "Checking the Last balance logic working or not and the balance is : ${newexpense.expance_balance}");
 
-    return rowseffected>0;
-}
+    return rowseffected > 0;
+  }
 
+  ///fethall exoance
 
-///fethall exoance
-
-Future<List<ExpenseModel>> fetchExpense()async{
+  Future<List<ExpenseModel>> fetchExpense() async {
     SharedPreferences Prefs = await SharedPreferences.getInstance();
     int userID = Prefs.getInt("user")!;
     Database db = await GetDb();
-  List<Map<String , dynamic>> mData =await db.query(Table_Expence,where: "$user_id = ?", whereArgs: [userID]);
-  List<ExpenseModel>expenses =[];
-  for(Map<String , dynamic> eachExp in mData){
-    expenses.add(ExpenseModel.frommap(eachExp));
+    List<Map<String, dynamic>> mData = await db
+        .query(Table_Expence, where: "$user_id = ?", whereArgs: [userID],
+        orderBy: "$expance_date DESC");
+    List<ExpenseModel> expenses = [];
+    for (Map<String, dynamic> eachExp in mData) {
+      expenses.add(ExpenseModel.frommap(eachExp));
+    }
+    return expenses;
   }
-  return expenses;
-}
-///delete expance
-///update expance
 
+  ///delete expance
+  ///update expance
 
-///fetchUser
-Future<List<UserModel>> fetchUser()async{
+  ///fetchUser
+  Future<List<UserModel>> fetchUser() async {
     Database db = await GetDb();
     SharedPreferences Prefs = await SharedPreferences.getInstance();
-   int userId= Prefs.getInt("user")??0;
-    List<Map<String,dynamic>> mUser = await db.query(Table_user,where:"$userId = ?",whereArgs: [user_id]);
+    int userId = Prefs.getInt("user") ?? 0;
+    List<Map<String, dynamic>> mUser = await db.query(Table_user,
+        where: "$userId = ?",
+        whereArgs: [user_id]);
     List<UserModel> userData = [];
-    for(Map<String , dynamic> eachUser in mUser){
+    for (Map<String, dynamic> eachUser in mUser) {
       userData.add(UserModel.frommap(eachUser));
     }
     return userData;
-}
+  }
 }
