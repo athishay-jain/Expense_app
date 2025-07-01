@@ -142,8 +142,8 @@ class Dbhelper {
     SharedPreferences Prefs = await SharedPreferences.getInstance();
     int userId = Prefs.getInt("user") ?? 0;
     List<Map<String, dynamic>> mUser = await db.query(Table_user,
-        where: "$userId = ?",
-        whereArgs: [user_id]);
+        where: "$user_id = ?",
+        whereArgs: [userId]);
     List<UserModel> userData = [];
     for (Map<String, dynamic> eachUser in mUser) {
       userData.add(UserModel.frommap(eachUser));

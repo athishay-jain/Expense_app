@@ -434,7 +434,7 @@ class _EntryPageState extends State<EntryPage> {
                                         Extext(
                                             data: expenseData[index].title,
                                             size: 17,
-                                            fwight: FontWeight.w500),
+                                            fwight: FontWeight.w600),
                                         Spacer(),
                                         Padding(
                                           padding:
@@ -445,7 +445,7 @@ class _EntryPageState extends State<EntryPage> {
                                                       .bal
                                                       .toString(),
                                                   size: 17,
-                                                  fwight: FontWeight.w500,
+                                                  fwight: FontWeight.w600,
                                                   textColor:
                                                       Colors.red.shade400,
                                                 )
@@ -454,7 +454,7 @@ class _EntryPageState extends State<EntryPage> {
                                                       .bal
                                                       .toString(),
                                                   size: 17,
-                                                  fwight: FontWeight.w500,
+                                                  fwight: FontWeight.w600,
                                                   textColor: Colors.green,
                                                 ),
                                         )
@@ -488,35 +488,30 @@ class _EntryPageState extends State<EntryPage> {
                                                     "${AppConstansts.incomeCategoryItems[expenseData[index].allExpense[cindex].expance_category]["icon"]}",
                                                     scale: 10,
                                                   ),
-                                            title: Text(expenseData[index]
+                                            title: Extext(data :expenseData[index]
                                                 .allExpense[cindex]
-                                                .expance_title),
-                                            subtitle: Text(expenseData[index]
+                                                .expance_title,size: 16,fwight: FontWeight.w500,),
+                                            subtitle: Extext(data:expenseData[index]
                                                 .allExpense[cindex]
-                                                .expance_description),
+                                                .expance_description,size: 14,fwight: FontWeight.w400,),
                                             trailing: expenseData[index]
                                                         .allExpense[cindex]
                                                         .expence_type ==
                                                     1
-                                                ? Text(
+                                                ? Extext(data:
                                                     expenseData[index]
                                                         .allExpense[cindex]
-                                                        .expance_amount
-                                                        .toString(),
-                                                    style: TextStyle(
-                                                        fontSize: 15,
-                                                        color:
-                                                            Color(0xfffb56a2)),
+                                                        .expance_amount.toInt()
+                                                        .toString(),size: 16,fwight: FontWeight.w500,textColor:
+                                                Color(0xfffb56a2),
                                                   )
-                                                : Text(
-                                                    expenseData[index]
-                                                        .allExpense[cindex]
-                                                        .expance_amount
-                                                        .toString(),
-                                                    style: TextStyle(
-                                                        fontSize: 15,
-                                                        color: Colors.green),
-                                                  ),
+                                                : Extext(data:
+                                            expenseData[index]
+                                                .allExpense[cindex]
+                                                .expance_amount.toInt()
+                                                .toString(),size: 16,fwight: FontWeight.w500,textColor:
+                                           Colors.green,
+                                            )
                                           );
                                         })
                                   ],

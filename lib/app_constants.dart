@@ -61,4 +61,5 @@ class AppConstansts {
 
   ];
   static const String lastBalance = "lastBalance";
+  static const String expenseLimit = "expenselimit";
 }

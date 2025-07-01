@@ -45,6 +45,12 @@ class _StatisticPageState extends State<StatisticPage> {
 
   String selectedDate = "Date wise";
   int? selectedintType = 1;
+  bool isLoading = false;
+
+  TextEditingController expenseLimitController = TextEditingController();
+
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
 
   @override
   Widget build(BuildContext context) {
@@ -57,21 +63,7 @@ class _StatisticPageState extends State<StatisticPage> {
         title: Row(
           children: [
             Extext(data: "Statistic", size: 26, fwight: FontWeight.w600),
-            Spacer(),
-            Container(
-              width: 130,
-              height: 40,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Color(0x15fd559e)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Extext(data: "This month", size: 15, fwight: FontWeight.w500),
-                  Icon(Icons.arrow_downward_rounded),
-                ],
-              ),
-            ),
+
           ],
         ),
       ),
@@ -86,7 +78,12 @@ class _StatisticPageState extends State<StatisticPage> {
           }
           if (state is ExpenseLoadedlState) {
             late List<BarChartGroupData> bardata = [];
+            var expenseLimit = state.expenseLimit;
             var graphdata = state.mExpenses;
+            double prefsLimit = state.prefsLimit!;
+            double? spent = expenseLimit[0].expense?.toDouble();
+            double ratio = (spent!.abs() / prefsLimit).clamp(0.0, 1.0);
+            print("the ratio value is $ratio");
             BarCharGroup(graphdata, bardata);
             return ListView(
               children: [
@@ -135,19 +132,18 @@ class _StatisticPageState extends State<StatisticPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.only(left: 20),
-                                child: Extext(
-                                  data: "₹${graphdata[0].expense!.abs()}",
-                                  size: 25,
-                                  fwight: FontWeight.bold,
-                                  textColor: Colors.white,
-                                ),
-                              ),
+                                  padding: const EdgeInsets.only(left: 20),
+                                  child: Extext(
+                                    data: "₹${expenseLimit[0].expense!.abs().toInt()}",
+                                    size: 25,
+                                    fwight: FontWeight.bold,
+                                    textColor: Colors.white,
+                                  )),
                               Padding(
                                 padding:
                                     const EdgeInsets.only(left: 10, top: 8),
                                 child: Extext(
-                                  data: "/₹4,000 per month",
+                                  data: "/₹${prefsLimit.toInt().toString()} per month",
                                   size: 16,
                                   fwight: FontWeight.w500,
                                   textColor: Colors.white,
@@ -158,113 +154,176 @@ class _StatisticPageState extends State<StatisticPage> {
                           SizedBox(
                             height: 10,
                           ),
-                          Stack(
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(left: 20),
-                                height: 9,
-                                width: 290,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(50),
-                                    color: Colors.white.withAlpha(100)),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(left: 20),
-                                height: 9,
-                                width: 200,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(50),
-                                    color: Colors.yellow),
-                              ),
-                            ],
+                          Container(
+                            width: 300,
+                            child: Stack(
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(left: 20),
+                                  height: 9,
+                                  width: 290,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(50),
+                                      color: Colors.white.withAlpha(100)),
+                                ),
+                                FractionallySizedBox(
+                                  widthFactor: ratio,
+                                  child: Container(
+                                    margin: EdgeInsets.only(left: 20),
+                                    height: 9,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(50),
+                                        color: Colors.yellow),
+                                  ),
+                                ),
+                              ],
+                            ),
                           )
                         ],
                       ),
                       Spacer(),
                       Padding(
                         padding: const EdgeInsets.only(right: 20, bottom: 70),
-                        child: InkWell(
-                          autofocus: true,
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text('Popup Sheet'),
-                                  content: Text(
-                                      'This is a popup dialog in Flutter!'),
-                                  actionsAlignment: MainAxisAlignment.center,
-                                  actions: [
-                                    Column(
-                                      children: [
-                                        SizedBox(
-                                          height: 50,
-                                          width: 200,
-                                          child: TextFormField(
-                                            decoration: InputDecoration(
-                                              border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 20,
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
+                        child: Material(
+                          color: Colors.transparent,
+                          shape: CircleBorder(),
+                          child: InkWell(
+                            radius: 16,
+
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Form(
+                                    key: formKey,
+                                    child: AlertDialog(
+                                      title: Center(
+                                          child: Extext(
+                                              data: "Expense Limit",
+                                              size: 20,
+                                              fwight: FontWeight.w500)),
+                                      content: Padding(
+                                        padding: const EdgeInsets.only(left: 10),
+                                        child: Extext(
+                                            data: "Set the expense limit ",
+                                            size: 14,
+                                            fwight: FontWeight.w400),
+                                      ),
+                                      actionsAlignment: MainAxisAlignment.center,
+                          
+                                      actions: [
+                                        Column(
                                           children: [
-                                            OutlinedButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
+                                            TextFormField(
+                                              validator: (value) {
+                                                if (value == null || value.isEmpty) {
+                                                  return "Limit is required";
+                                                }
+                                                return null;
                                               },
-                                              style: OutlinedButton.styleFrom(
-                                                  side: BorderSide(
-                                                    color: Color(0xfffb56a2),
-                                                    width: 1,
+                                              controller: expenseLimitController,
+                                              keyboardType: TextInputType.number,
+                                              decoration: InputDecoration(
+                                                contentPadding: EdgeInsets.symmetric(vertical: 18,horizontal: 20),
+                                                label: Text(
+                                                  "Limit",
+                                                  style: TextStyle(
+                                                      fontFamily: "poppies", fontWeight: FontWeight.bold),
+                                                ),
+                                                errorBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(18),
+                                                  borderSide: BorderSide(color: Colors.red.shade700),
+                                                ),
+                                                focusedErrorBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(18),
+                                                  borderSide: BorderSide(
+                                                    color: Color(0xfffd559e),
+                                                    width: 2,
                                                   ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  )),
-                                              child: Text(
-                                                'Close',
-                                                style: TextStyle(
-                                                  color: Color(0xfffb56a2),
+                                                ),
+                                                focusedBorder: OutlineInputBorder(
+                                                    borderRadius: BorderRadius.circular(18),
+                                                    borderSide:
+                                                    BorderSide(color: Color(0xfffd559e), width: 2)),
+                                                enabledBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(18),
                                                 ),
                                               ),
                                             ),
-                                            ElevatedButton(
-                                              onPressed: () {},
-                                              style: ElevatedButton.styleFrom(
-                                                  backgroundColor:
-                                                      Color(0xfffb56a2),
-                                                  foregroundColor: Colors.white,
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10))),
-                                              child: Text("Save"),
+                                            SizedBox(
+                                              height: 30,
                                             ),
+                                           BlocListener<ExpenseBloc, ExpenseState>(listener: (ctx,state){
+                                             if(state  is ExpenseLoadingState){
+                                               isLoading = true;
+                                               setState(() {
+                          
+                                               });
+                                             }
+                                             if(state is ExpenseLoadedlState){
+                                               isLoading = false;
+                                                setState(() {
+                          
+                                               });
+                                               Future.microtask(() {
+                                                 if (Navigator.canPop(context)) {
+                                                   Navigator.pop(context);
+                                                 }
+                                               });
+                          
+                                             }
+                                             if(state is ExpenseErrorState){
+                                               isLoading = false;
+                                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("state.errorMes")));
+                                               setState(() {
+                                               });
+                                             }
+                                           },child: isLoading?Row(
+                                             mainAxisAlignment: MainAxisAlignment.center,
+                                             children: [
+                                               CircularProgressIndicator(color: Colors.pink,),
+                                               SizedBox(width: 5,),
+                                               Extext(data: "Loading", size: 16, fwight: FontWeight.w600),
+                                             ],
+                                           ) : ElevatedButton(
+                                             onPressed: () {
+                                               if(formKey.currentState!.validate()){
+                                                 context.read<ExpenseBloc>().add(Setexpenselimit(limit: double.parse(expenseLimitController.text)));
+                                               expenseLimitController.clear();
+                                               }
+                                              // context.read<ExpenseBloc>().add(Setexpenselimit(limit: double.parse(expenseLimitController.text)));
+                                             },
+                                             style: ElevatedButton.styleFrom(
+                                               backgroundColor: Color(0xfffb56a2),
+                                               foregroundColor: Colors.white,
+                                               shape: RoundedRectangleBorder(
+                                                 borderRadius:
+                                                 BorderRadius.circular(10),
+                                               ),
+                                               padding: EdgeInsets.symmetric(horizontal: 30,vertical: 10),
+                                               minimumSize: Size(220, 40),
+                                             ),
+                                             child: Extext(
+                                                 data: "SAVE",
+                                                 size: 16,
+                                                 fwight: FontWeight.w600),
+                                           ),),
+                                            SizedBox(height: 20,),
                                           ],
-                                        ),
+                                        )
                                       ],
-                                    )
-                                  ],
-                                );
-                              },
-                            );
-                            setState(() {});
-                          },
-                          child: CircleAvatar(
-                            radius: 16,
-                            backgroundColor: Colors.white.withAlpha(80),
-                            child: Icon(
-                              Icons.more_horiz,
-                              color: Colors.white,
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            child: CircleAvatar(
+                              radius: 16,
+                              backgroundColor: Colors.white.withAlpha(80),
+                              child: Icon(
+                                Icons.more_horiz,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -333,16 +392,6 @@ class _StatisticPageState extends State<StatisticPage> {
                     ),
                   ],
                 ),
-                /* SizedBox(
-                  height: 5,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25),
-                  child: Extext(
-                      data: "Limit₹900 / week",
-                      size: 15,
-                      fwight: FontWeight.w400),
-                ),*/
                 SizedBox(
                   height: 25,
                 ),
@@ -354,15 +403,14 @@ class _StatisticPageState extends State<StatisticPage> {
                   child: BarChart(
                     BarChartData(
                       barTouchData: BarTouchData(
-                        enabled: true,
-                        touchTooltipData: BarTouchTooltipData(
-                          tooltipBorder: BorderSide(width: 1,color: Colors.grey),
-                          tooltipBorderRadius: BorderRadius.circular(6),
-                          getTooltipColor:(group){
-                            return Color(0xfffef7ff);
-                          }
-                        )
-                      ),
+                          enabled: true,
+                          touchTooltipData: BarTouchTooltipData(
+                              tooltipBorder:
+                                  BorderSide(width: 1, color: Colors.grey),
+                              tooltipBorderRadius: BorderRadius.circular(6),
+                              getTooltipColor: (group) {
+                                return Color(0xfffef7ff);
+                              })),
                       barGroups: bardata,
                       titlesData: FlTitlesData(
                         topTitles: AxisTitles(
@@ -377,20 +425,26 @@ class _StatisticPageState extends State<StatisticPage> {
                         ),
                         bottomTitles: AxisTitles(
                           sideTitles: SideTitles(
-                            getTitlesWidget: (double value, TitleMeta meta)  {
+                            getTitlesWidget: (double value, TitleMeta meta) {
                               if (selectedintType == 1) {
                                 print(graphdata[value.toInt()].title);
+                                try {
+                                  String inputDate =
+                                      graphdata[value.toInt()].title.toString();
+                                  DateFormat formet =
+                                      DateFormat /*("EEE, MMM d,yyyy")*/
+                                          .yMMMEd();
 
-                                String inputDate =
-                                    graphdata[value.toInt()].title.toString();
-                                DateFormat formet = DateFormat/*("EEE, MMM d,yyyy")*/.yMMMEd();
-                                DateTime actualdate = formet.parse(inputDate);
+                                  DateTime actualdate = formet.parse(inputDate);
 
-                                String formatedDate = actualdate.day.toString();
+                                  String formatedDate =
+                                      actualdate.day.toString();
 
-                               return Text(formatedDate);
-                              }
-                              else {
+                                  return Text(formatedDate);
+                                } catch (e) {
+                                  return Text("...");
+                                }
+                              } else {
                                 return Text(graphdata[value.toInt()].title);
                               }
                             },
@@ -400,6 +454,34 @@ class _StatisticPageState extends State<StatisticPage> {
                       ),
                     ),
                   ),
+                ),
+                Row(
+                  children: [
+                    Spacer(),
+                    CircleAvatar(
+                      radius: 8,
+                      backgroundColor: Colors.green,
+                    ),
+                    SizedBox(
+                      width: 3,
+                    ),
+                    Extext(data: "Income", size: 14, fwight: FontWeight.w500),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    CircleAvatar(
+                      radius: 8,
+                      backgroundColor: Colors.red,
+                    ),
+                    SizedBox(
+                      width: 3,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 20),
+                      child: Extext(
+                          data: "Expense", size: 14, fwight: FontWeight.w500),
+                    ),
+                  ],
                 ),
                 SizedBox(
                   height: 15,
@@ -571,10 +653,7 @@ class _StatisticPageState extends State<StatisticPage> {
   }
 
   void BarCharGroup(var graphdatat, List bardata) {
-    print("the lenth of the grphdata is ${graphdatat.length}");
     for (int a = 0; a < graphdatat.length; a++) {
-      int index = 0;
-      print("the index before loop $a");
       bardata.add(BarChartGroupData(
         x: a,
         barRods: [
@@ -596,8 +675,6 @@ class _StatisticPageState extends State<StatisticPage> {
           ),
         ],
       ));
-      index++;
-      print("the index after loop $a");
     }
   }
 }

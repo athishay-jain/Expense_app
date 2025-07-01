@@ -36,8 +36,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     });
     on<GetIntialUserData>((event, emit)async{
       emit(UserLoadingState());
-      var userData = await dbhelper.fetchExpense();
-      emit(UserSuccessState());
+      var userData = await dbhelper.fetchUser();
+      emit(UserLoadedState(userData: userData));
     });
   }
 }
