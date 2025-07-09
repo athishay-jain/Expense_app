@@ -34,6 +34,32 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     }
 
     });
+
+    on<UpdateExpenseEvent>((event,emit)async {
+      emit(ExpenseLoadingState());
+
+      try {
+        print("the uid is ${event.newExpense.expence_id}");
+        firebase.updateData(updateExpense: event.newExpense, uid: event.newExpense.expence_id!);
+      }
+      on FirebaseException catch(e){
+        emit(ExpenseErrorState(errorMes: e.message!));
+      }
+      catch(e){
+        emit(ExpenseErrorState(errorMes: e.toString()));
+      };
+    });
+    on<DeleteExpenseEvent>((event,emit){
+      try{
+        firebase.deleteData(uid: event.uId);
+      }
+      on FirebaseException catch(e){
+        emit(ExpenseErrorState(errorMes: e.message!));
+      }
+      catch(e){
+        emit(ExpenseErrorState(errorMes: e.toString()));
+      }
+    });
     on<GetIntialExpense>((event, emit) async {
       try {
         await emit.forEach(
@@ -70,7 +96,6 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
       uniqueDates.add(eachDate);
     }
 
-    print("the expense bloc is working ");
     for (String eachDate in uniqueDates) {
       num bal = 0.0;
       List<ExpenseModel> selectedExpense = [];
@@ -92,7 +117,6 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
           }
         }
       }
-      print(" $eachDate : $bal ${selectedExpense.length}");
       FiltredData.add(FilterdExpenseModel(
           title: eachDate,
           allExpense: selectedExpense,
@@ -100,7 +124,6 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
           income: income,
           expense: expense));
     }
-    print("the expense bloc is returned the data ");
     return FiltredData;
   }
 
@@ -218,7 +241,6 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
         uniqueDates.add(eachDate);
       }
 
-      print("These are the Unique dates : $uniqueDates");
       for (String eachDate in uniqueDates) {
         num bal = 0.0;
         List<ExpenseModel> selectedExpense = [];
@@ -240,7 +262,6 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
             }
           }
         }
-        print(" $eachDate : $bal ${selectedExpense.length}");
         FiltredData.add(FilterdExpenseModel(
             title: eachDate,
             allExpense: selectedExpense,

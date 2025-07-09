@@ -6,26 +6,26 @@ import 'package:intl/intl.dart';
 
 class CustomDatePicker extends StatefulWidget {
   ValueChanged<DateTime> onDatechanged;
-  CustomDatePicker({required this.onDatechanged});
+  DateTime selectedDate;
+  CustomDatePicker({required this.onDatechanged,required this.selectedDate});
   @override
   _CustomDatePickerState createState() => _CustomDatePickerState();
 }
 class _CustomDatePickerState extends State<CustomDatePicker> {
 
-  DateTime selectedDate = DateTime.now();
   // Default to current date
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate, // show current date initially
+      initialDate: widget.selectedDate, // show current date initially
       firstDate: DateTime(2000), // earliest date
       lastDate: DateTime(2100),  // latest date
     );
 
-    if (picked != null && picked != selectedDate) {
+    if (picked != null && picked != widget.selectedDate) {
       setState(() {
-        selectedDate = picked;
-        widget.onDatechanged(selectedDate);
+        widget.selectedDate = picked;
+        widget.onDatechanged(widget.selectedDate);
       });
     }
   }
@@ -33,7 +33,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
   @override
   void initState() {
     super.initState();
-    widget.onDatechanged(selectedDate);
+    widget.onDatechanged(widget.selectedDate);
   }
 
   @override
@@ -57,7 +57,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
 
                 children: [
                   Text(
-                    DateFormat('dd/MM/yyyy').format(selectedDate),
+                    DateFormat('dd/MM/yyyy').format(widget.selectedDate),
                     style: TextStyle(color: Colors.black),
                   ),
                   Icon(Icons.arrow_drop_down, color: Colors.grey),
