@@ -1,10 +1,14 @@
-import 'package:expance_app/Local/Models/user_model.dart';
-import 'package:expance_app/UI/CutomWidget/ExText.dart';
-import 'package:expance_app/UI/screens/login/bloc/user_bloc.dart';
-import 'package:expance_app/UI/screens/login/bloc/user_event.dart';
-import 'package:expance_app/UI/screens/login/bloc/user_state.dart';
+
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../Online/Models/user_model.dart';
+import '../../CutomWidget/ExText.dart';
+import 'bloc/user_bloc.dart';
+import 'bloc/user_event.dart';
+import 'bloc/user_state.dart';
 
 class SignupPage extends StatefulWidget {
   @override
@@ -24,6 +28,13 @@ class _SignupPageState extends State<SignupPage> {
 
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
 
+  late FirebaseAuth firebaseAuth;
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+  }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -262,6 +273,9 @@ class _SignupPageState extends State<SignupPage> {
                 }
                 if (state is UserSuccessState) {
                   isLoading = false;
+                  setState(() {
+
+                  });
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text(
                     "User registered successfully !!",

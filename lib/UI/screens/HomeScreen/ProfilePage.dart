@@ -1,13 +1,16 @@
 import 'package:expance_app/UI/CutomWidget/ExText.dart';
 import 'package:expance_app/UI/screens/HomeScreen/Profile_pages/User_profile.dart';
-import 'package:expance_app/UI/screens/login/bloc/user_bloc.dart';
-import 'package:expance_app/UI/screens/login/bloc/user_event.dart';
-import 'package:expance_app/UI/screens/login/bloc/user_state.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../login/Login_page.dart';
+import '../auth/Login_page.dart';
+import '../auth/bloc/user_bloc.dart';
+import '../auth/bloc/user_event.dart';
+import '../auth/bloc/user_state.dart';
+
 
 class Profilepage extends StatefulWidget {
   @override
@@ -39,7 +42,7 @@ class _ProfilepageState extends State<Profilepage> {
 @override
   void initState() {
     super.initState();
-    context.read<UserBloc>().add(GetIntialUserData());
+    context.read<UserBloc>().add(GetInitialUserData());
   }
   bool value = true;
   bool ObscureText = true;
@@ -65,8 +68,8 @@ class _ProfilepageState extends State<Profilepage> {
               }
               if(state is UserLoadedState){
                var userData = state.userData;
-               print("email is ${userData[0].user_email}");
-               print("password is ${userData[0].user_password}");
+               print("email is ${userData.user_email}");
+               print("password is ${userData.user_password}");
                return ListTile(
                  leading: CircleAvatar(
                    backgroundImage: NetworkImage(
@@ -80,12 +83,11 @@ class _ProfilepageState extends State<Profilepage> {
                    textColor: Colors.grey,
                  ),
                  subtitle: Extext(
-                     data: userData[0].user_name, size: 18, fwight: FontWeight.w600),
+                     data: userData.user_name, size: 18, fwight: FontWeight.w600),
                  trailing: IconButton(
                    onPressed: () async {
-                     SharedPreferences Prefs =
-                     await SharedPreferences.getInstance();
-                     Prefs.remove("user");
+                     FirebaseAuth.instance.signOut();
+                     GoogleSignIn().signOut();
                      Navigator.pushReplacement(
                          context,
                          MaterialPageRoute(
@@ -99,7 +101,10 @@ class _ProfilepageState extends State<Profilepage> {
                  ),
                );
               }
-              return Text("");
+              if(state is UserFailureState){
+                return Text(state.errorMesg);
+              }
+              return Text("h");
             }),
             SizedBox(
               height: 30,

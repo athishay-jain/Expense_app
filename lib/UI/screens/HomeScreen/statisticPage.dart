@@ -1,12 +1,13 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:expance_app/Local/Bloc/expense_bloc.dart';
-import 'package:expance_app/Local/Bloc/expense_event.dart';
-import 'package:expance_app/Local/Bloc/expense_state.dart';
 import 'package:expance_app/UI/CutomWidget/ExText.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+
+import '../../../Online/Bloc/expense_bloc.dart';
+import '../../../Online/Bloc/expense_event.dart';
+import '../../../Online/Bloc/expense_state.dart';
 
 class StatisticPage extends StatefulWidget {
   @override
@@ -80,8 +81,8 @@ class _StatisticPageState extends State<StatisticPage> {
             late List<BarChartGroupData> bardata = [];
             var expenseLimit = state.expenseLimit;
             var graphdata = state.mExpenses;
-            double prefsLimit = state.prefsLimit!;
-            double? spent = expenseLimit[0].expense?.toDouble();
+            double prefsLimit = state.prefsLimit??0.0;
+            double? spent = expenseLimit.isNotEmpty?expenseLimit[0].expense?.toDouble() :0;
             double ratio = (spent!.abs() / prefsLimit).clamp(0.0, 1.0);
             print("the ratio value is $ratio");
             BarCharGroup(graphdata, bardata);
@@ -134,7 +135,7 @@ class _StatisticPageState extends State<StatisticPage> {
                               Padding(
                                   padding: const EdgeInsets.only(left: 20),
                                   child: Extext(
-                                    data: "₹${expenseLimit[0].expense!.abs().toInt()}",
+                                    data: "₹${expenseLimit.isNotEmpty? expenseLimit[0].expense!.abs().toInt():0}",
                                     size: 25,
                                     fwight: FontWeight.bold,
                                     textColor: Colors.white,

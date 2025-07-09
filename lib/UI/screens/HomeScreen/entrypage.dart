@@ -1,13 +1,14 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:expance_app/Local/Bloc/expense_bloc.dart';
-import 'package:expance_app/Local/Bloc/expense_event.dart';
-import 'package:expance_app/Local/Bloc/expense_state.dart';
-import 'package:expance_app/Local/Models/filterExpenseModel.dart';
 import 'package:expance_app/UI/CutomWidget/ExText.dart';
+import 'package:expance_app/UI/screens/HomeScreen/AddExpensePage.dart';
 import 'package:expance_app/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../Online/Bloc/expense_bloc.dart';
+import '../../../Online/Bloc/expense_event.dart';
+import '../../../Online/Bloc/expense_state.dart';
 
 class EntryPage extends StatefulWidget {
   @override
@@ -178,149 +179,169 @@ class _EntryPageState extends State<EntryPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            selectedintType == 4 ?Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      height: 25,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 20),
-                                      child: Extext(
-                                        data: "Total Transaction",
-                                        size: 18,
-                                        fwight: FontWeight.w500,
-                                        textColor: Colors.white,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 20),
-                                      child: Extext(
-                                        data: /*"₹${expenseData[expLastIndex].bal}"*/
-                                            "₹${TotalExpense(
-                                          lastbla: lastBalance,
-                                          expensedata: expenseData,
-                                        )}",
-                                        size: 40,
-                                        fwight: FontWeight.bold,
-                                        textColor: Colors.white,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Visibility(
-                                        visible: showlastexp,
-                                        child: Row(
-                                          children: [
-                                            SizedBox(
-                                              width: 20,
-                                            ),
-                                            Card(
-                                              color: Colors.orange.shade500,
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6)),
-                                              child: Padding(
-                                                padding: const EdgeInsets.symmetric(
-                                                    horizontal: 8, vertical: 2),
-                                                child: Extext(
-                                                  data: lastmonthEx(
-                                                      expensedata: expenseData),
-                                                  size: 16,
-                                                  fwight: FontWeight.w500,
-                                                  textColor: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                            Extext(
-                                              data: "Then Last",
-                                              size: 13,
-                                              fwight: FontWeight.w500,
-                                              textColor: Colors.white,
-                                            ),
-                                          ],
-                                        ))
-                                  ],
-                                ),
-
-                                Image.asset("Assets/Images/ic_budget.png",scale: 4,),
-
-                              ],
-                            ):Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  height: 25,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 20),
-                                  child: Extext(
-                                    data: "Total Expense",
-                                    size: 18,
-                                    fwight: FontWeight.w500,
-                                    textColor: Colors.white,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 20),
-                                  child: Extext(
-                                    data: /*"₹${expenseData[expLastIndex].bal}"*/
-                                    "₹${TotalExpense(
-                                      lastbla: lastBalance,
-                                      expensedata: expenseData,
-                                    )}",
-                                    size: 30,
-                                    fwight: FontWeight.bold,
-                                    textColor: Colors.white,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Visibility(
-                                    visible: showlastexp,
-                                    child: Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        Card(
-                                          color: Colors.orange.shade500,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                              BorderRadius.circular(6)),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 2),
+                            selectedintType == 4
+                                ? Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            height: 25,
+                                          ),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 20),
                                             child: Extext(
-                                              data: lastmonthEx(
-                                                  expensedata: expenseData),
-                                              size: 16,
+                                              data: "Total Transaction",
+                                              size: 18,
                                               fwight: FontWeight.w500,
                                               textColor: Colors.white,
                                             ),
                                           ),
-                                        ),
-                                        Extext(
-                                          data: "Then Last",
-                                          size: 13,
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 20),
+                                            child: Extext(
+                                              data: /*"₹${expenseData[expLastIndex].bal}"*/
+                                                  "₹${TotalExpense(
+                                                lastbla: lastBalance,
+                                                expensedata: expenseData,
+                                              )}",
+                                              size: 40,
+                                              fwight: FontWeight.bold,
+                                              textColor: Colors.white,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Visibility(
+                                              visible: showlastexp,
+                                              child: Row(
+                                                children: [
+                                                  SizedBox(
+                                                    width: 20,
+                                                  ),
+                                                  Card(
+                                                    color:
+                                                        Colors.orange.shade500,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        6)),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 8,
+                                                          vertical: 2),
+                                                      child: Extext(
+                                                        data: lastmonthEx(
+                                                            expensedata:
+                                                                expenseData),
+                                                        size: 16,
+                                                        fwight: FontWeight.w500,
+                                                        textColor: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Extext(
+                                                    data: "Then Last",
+                                                    size: 13,
+                                                    fwight: FontWeight.w500,
+                                                    textColor: Colors.white,
+                                                  ),
+                                                ],
+                                              ))
+                                        ],
+                                      ),
+                                      Image.asset(
+                                        "Assets/Images/ic_budget.png",
+                                        scale: 4,
+                                      ),
+                                    ],
+                                  )
+                                : Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        height: 25,
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 20),
+                                        child: Extext(
+                                          data: "Total Expense",
+                                          size: 18,
                                           fwight: FontWeight.w500,
                                           textColor: Colors.white,
                                         ),
-                                      ],
-                                    ))
-                              ],
-                            ),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 20),
+                                        child: Extext(
+                                          data: /*"₹${expenseData[expLastIndex].bal}"*/
+                                              "₹${TotalExpense(
+                                            lastbla: lastBalance,
+                                            expensedata: expenseData,
+                                          )}",
+                                          size: 30,
+                                          fwight: FontWeight.bold,
+                                          textColor: Colors.white,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Visibility(
+                                          visible: showlastexp,
+                                          child: Row(
+                                            children: [
+                                              SizedBox(
+                                                width: 20,
+                                              ),
+                                              Card(
+                                                color: Colors.orange.shade500,
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            6)),
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 2),
+                                                  child: Extext(
+                                                    data: lastmonthEx(
+                                                        expensedata:
+                                                            expenseData),
+                                                    size: 16,
+                                                    fwight: FontWeight.w500,
+                                                    textColor: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                              Extext(
+                                                data: "Then Last",
+                                                size: 13,
+                                                fwight: FontWeight.w500,
+                                                textColor: Colors.white,
+                                              ),
+                                            ],
+                                          ))
+                                    ],
+                                  ),
                             Visibility(
                               visible: selectedintType! < 4,
                               child: Padding(
@@ -372,7 +393,10 @@ class _EntryPageState extends State<EntryPage> {
                                                 borderRadius:
                                                     BorderRadius.circular(6)),
                                             child: Padding(
-                                              padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 2),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 2),
                                               child: Extext(
                                                 data: lastmonthIn(
                                                     expensedata: expenseData),
@@ -476,43 +500,94 @@ class _EntryPageState extends State<EntryPage> {
                                             .length,
                                         itemBuilder: (_, cindex) {
                                           return ListTile(
-                                            leading: expenseData[index]
-                                                        .allExpense[cindex]
-                                                        .expence_type ==
-                                                    1
-                                                ? Image.asset(
-                                                    "${AppConstansts.expenseCategoryItems[expenseData[index].allExpense[cindex].expance_category]["icon"]}",
-                                                    scale: 10,
-                                                  )
-                                                : Image.asset(
-                                                    "${AppConstansts.incomeCategoryItems[expenseData[index].allExpense[cindex].expance_category]["icon"]}",
-                                                    scale: 10,
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  PageRouteBuilder(
+                                                    pageBuilder: (context,
+                                                            animation,
+                                                            secondaryAnimation) =>
+                                                        AddExpense(
+                                                      isUpdate: true,
+                                                      expense: expenseData[
+                                                              index]
+                                                          .allExpense[cindex],
+                                                    ),
+                                                    transitionsBuilder:
+                                                        (context,
+                                                            animation,
+                                                            secondaryAnimation,
+                                                            child) {
+                                                      var begin = Offset(0, 1);
+                                                      var end = Offset.zero;
+                                                      var curve = Curves
+                                                          .easeInOutCubicEmphasized;
+                                                      var tween = Tween(
+                                                              begin: begin,
+                                                              end: end)
+                                                          .chain(CurveTween(
+                                                              curve: curve));
+
+                                                      return SlideTransition(
+                                                        position: animation
+                                                            .drive(tween),
+                                                        child: child,
+                                                      );
+                                                    },
                                                   ),
-                                            title: Extext(data :expenseData[index]
-                                                .allExpense[cindex]
-                                                .expance_title,size: 16,fwight: FontWeight.w500,),
-                                            subtitle: Extext(data:expenseData[index]
-                                                .allExpense[cindex]
-                                                .expance_description,size: 14,fwight: FontWeight.w400,),
-                                            trailing: expenseData[index]
-                                                        .allExpense[cindex]
-                                                        .expence_type ==
-                                                    1
-                                                ? Extext(data:
-                                                    expenseData[index]
-                                                        .allExpense[cindex]
-                                                        .expance_amount.toInt()
-                                                        .toString(),size: 16,fwight: FontWeight.w500,textColor:
-                                                Color(0xfffb56a2),
-                                                  )
-                                                : Extext(data:
-                                            expenseData[index]
-                                                .allExpense[cindex]
-                                                .expance_amount.toInt()
-                                                .toString(),size: 16,fwight: FontWeight.w500,textColor:
-                                           Colors.green,
-                                            )
-                                          );
+                                                );
+                                              },
+                                              leading: expenseData[index]
+                                                          .allExpense[cindex]
+                                                          .expence_type ==
+                                                      1
+                                                  ? Image.asset(
+                                                      "${AppConstansts.expenseCategoryItems[expenseData[index].allExpense[cindex].expance_category]["icon"]}",
+                                                      scale: 10,
+                                                    )
+                                                  : Image.asset(
+                                                      "${AppConstansts.incomeCategoryItems[expenseData[index].allExpense[cindex].expance_category]["icon"]}",
+                                                      scale: 10,
+                                                    ),
+                                              title: Extext(
+                                                data: expenseData[index]
+                                                    .allExpense[cindex]
+                                                    .expance_title,
+                                                size: 16,
+                                                fwight: FontWeight.w500,
+                                              ),
+                                              subtitle: Extext(
+                                                data: expenseData[index]
+                                                    .allExpense[cindex]
+                                                    .expance_description,
+                                                size: 14,
+                                                fwight: FontWeight.w400,
+                                              ),
+                                              trailing: expenseData[index]
+                                                          .allExpense[cindex]
+                                                          .expence_type ==
+                                                      1
+                                                  ? Extext(
+                                                      data: expenseData[index]
+                                                          .allExpense[cindex]
+                                                          .expance_amount
+                                                          .toInt()
+                                                          .toString(),
+                                                      size: 16,
+                                                      fwight: FontWeight.w500,
+                                                      textColor:
+                                                          Color(0xfffb56a2),
+                                                    )
+                                                  : Extext(
+                                                      data: expenseData[index]
+                                                          .allExpense[cindex]
+                                                          .expance_amount
+                                                          .toInt()
+                                                          .toString(),
+                                                      size: 16,
+                                                      fwight: FontWeight.w500,
+                                                      textColor: Colors.green,
+                                                    ));
                                         })
                                   ],
                                 ),

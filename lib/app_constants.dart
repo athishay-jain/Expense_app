@@ -62,4 +62,19 @@ class AppConstansts {
   ];
   static const String lastBalance = "lastBalance";
   static const String expenseLimit = "expenselimit";
+
+  static const String expence_id = "expense_id";
+  static const String expance_title = "title";
+  static const String expance_description = "description";
+  static const String expance_amount = "amount";
+  static const String expance_balance = "balance";
+  static const String expance_category = "category";
+  static const String expance_date = "date";
+  static const String expence_type = "type";
+
+  static const String user_id = "id";
+  static const String user_name = "name";
+  static const String user_email = "email";
+  static const String user_password = "password";
+  static const String user_mobile = "mobile";
 }

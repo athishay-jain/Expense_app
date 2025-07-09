@@ -1,4 +1,6 @@
-import 'package:expance_app/Local/Models/expense_model.dart';
+
+
+import 'expense_model.dart';
 
 class FilterdExpenseModel {
   String title;

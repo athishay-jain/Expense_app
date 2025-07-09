@@ -1,24 +1,70 @@
-import 'package:expance_app/Local/Bloc/expense_event.dart';
-import 'package:expance_app/Local/Bloc/expense_state.dart';
-import 'package:expance_app/Local/Database/Dbhelper.dart';
-import 'package:expance_app/Local/Models/expense_model.dart';
-import 'package:expance_app/Local/Models/filterExpenseModel.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:expance_app/Online/Firebase/firebase_services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../app_constants.dart';
+import '../Models/expense_model.dart';
+import '../Models/filterExpenseModel.dart';
+import 'expense_event.dart';
+import 'expense_state.dart';
 
 class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
-  Dbhelper dbhelper;
+  FirebaseServices firebase;
 
-  List<FilterdExpenseModel> ExpenseLimit({required List<ExpenseModel>mExp}){
+  ExpenseBloc({required this.firebase}) : super(ExpenseIntialState()) {
+    on<AddExpenseEvent>((event, emit) async {
+      emit(ExpenseLoadingState());
+    try{
+      DocumentReference docRef= await firebase.addData(newExpense: event.newExpense);
+        emit(ExpenseSuccessState());
+      await emit.forEach(
+        firebase.queryExpense(),
+        onData: (data) {
+          List<FilterdExpenseModel> filter =
+          filterExpenses(mExp: data, );
+          List<FilterdExpenseModel> limit = ExpenseLimit(mExp: data);
+          return ExpenseLoadedlState(mExpenses: filter, expenseLimit: limit);
+        },
+      );
+    }on FirebaseException catch(e){
+      emit(ExpenseErrorState(errorMes: e.message??""));
+    }catch(e){
+      emit(ExpenseErrorState(errorMes: "The could not added : $e"));
+    }
+
+    });
+    on<GetIntialExpense>((event, emit) async {
+      try {
+        await emit.forEach(
+          firebase.queryExpense(),
+          onData: (data) {
+            List<FilterdExpenseModel> filter =
+                filterExpenses(mExp: data, filterType: event.filtertype);
+            List<FilterdExpenseModel> limit = ExpenseLimit(mExp: data);
+            return ExpenseLoadedlState(mExpenses: filter, expenseLimit: limit);
+          },
+        );
+      } on FirebaseException catch (e) {
+        emit(ExpenseErrorState(errorMes: e.message ?? ""));
+      } catch (e) {
+        emit(ExpenseErrorState(errorMes: e.toString()));
+      }
+    });
+    on<Setexpenselimit>((event, emit) async {
+      emit(ExpenseLoadingState());
+
+    });
+  }
+
+  List<FilterdExpenseModel> ExpenseLimit({required List<ExpenseModel> mExp}) {
     Set<String> uniqueDates = {};
-  DateFormat df = DateFormat.yMMM();
+    DateFormat df = DateFormat.yMMM();
     List<FilterdExpenseModel> FiltredData = [];
     for (ExpenseModel eachExp in mExp) {
       String eachDate = df
           .format(DateTime.fromMillisecondsSinceEpoch(
-          int.parse(eachExp.expance_date)))
+              int.parse(eachExp.expance_date)))
           .toString();
 
       uniqueDates.add(eachDate);
@@ -38,7 +84,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
           selectedExpense.add(eachExp);
 
           if (eachExp.expence_type == 1) {
-            expense -=eachExp.expance_amount;
+            expense -= eachExp.expance_amount;
             bal -= eachExp.expance_amount;
           } else {
             income += eachExp.expance_amount;
@@ -48,14 +94,20 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
       }
       print(" $eachDate : $bal ${selectedExpense.length}");
       FiltredData.add(FilterdExpenseModel(
-          title: eachDate, allExpense: selectedExpense, bal: bal,income: income,expense: expense));
+          title: eachDate,
+          allExpense: selectedExpense,
+          bal: bal,
+          income: income,
+          expense: expense));
     }
     print("the expense bloc is returned the data ");
     return FiltredData;
   }
 
-  List<FilterdExpenseModel> filterExpenses(
-      {required List<ExpenseModel> mExp, int filterType = 1}) {
+  List<FilterdExpenseModel> filterExpenses({
+    required List<ExpenseModel> mExp,
+    int filterType = 1,
+  }) {
     Set<String> uniqueDates = {};
 
     List<FilterdExpenseModel> FiltredData = [];
@@ -110,7 +162,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
             }
 
             if (eachExp.expence_type == 1) {
-              expense -=eachExp.expance_amount;
+              expense -= eachExp.expance_amount;
               bal -= eachExp.expance_amount;
             } else {
               income += eachExp.expance_amount;
@@ -120,7 +172,11 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
         }
         if (eachCatExp.isNotEmpty) {
           FiltredData.add(FilterdExpenseModel(
-              title: eachCat["title"], allExpense: eachCatExp, bal: bal,income: income,expense: expense));
+              title: eachCat["title"],
+              allExpense: eachCatExp,
+              bal: bal,
+              income: income,
+              expense: expense));
         }
       }
       for (Map<String, dynamic> eachCat in AppConstansts.incomeCategoryItems) {
@@ -135,7 +191,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
             }
 
             if (eachExp.expence_type == 1) {
-              expense -=eachExp.expance_amount;
+              expense -= eachExp.expance_amount;
               bal -= eachExp.expance_amount;
             } else {
               income += eachExp.expance_amount;
@@ -145,7 +201,11 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
         }
         if (eachCatExp.isNotEmpty) {
           FiltredData.add(FilterdExpenseModel(
-              title: eachCat["title"], allExpense: eachCatExp, bal: bal,income: income,expense: expense));
+              title: eachCat["title"],
+              allExpense: eachCatExp,
+              bal: bal,
+              income: income,
+              expense: expense));
         }
       }
     } else {
@@ -172,7 +232,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
             selectedExpense.add(eachExp);
 
             if (eachExp.expence_type == 1) {
-              expense -=eachExp.expance_amount;
+              expense -= eachExp.expance_amount;
               bal -= eachExp.expance_amount;
             } else {
               income += eachExp.expance_amount;
@@ -182,51 +242,14 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
         }
         print(" $eachDate : $bal ${selectedExpense.length}");
         FiltredData.add(FilterdExpenseModel(
-            title: eachDate, allExpense: selectedExpense, bal: bal,income: income,expense: expense));
+            title: eachDate,
+            allExpense: selectedExpense,
+            bal: bal,
+            income: income,
+            expense: expense));
       }
     }
 
     return FiltredData;
-  }
-
-  ExpenseBloc({required this.dbhelper}) : super(ExpenseIntialState()) {
-    on<AddExpenseEvent>((event, emit) async {
-      emit(ExpenseLoadingState());
-      bool check = await dbhelper.addExpense(newexpense: event.newExpense);
-      if (check) {
-        var expenses = await dbhelper.fetchExpense();
-        emit(ExpenseLoadedlState(mExpenses: filterExpenses(mExp: expenses),expenseLimit: ExpenseLimit(mExp: expenses)));
-      } else {
-        emit(ExpenseErrorState(
-            errorMes: "Something went wrong transaction didn't add"));
-      }
-    });
-    on<GetIntialExpense>((event, emit) async {
-
-      emit(ExpenseLoadingState());
-
-      var expenses = await dbhelper.fetchExpense();
-      SharedPreferences Prefs = await SharedPreferences.getInstance();
-      double limit = Prefs.getDouble(AppConstansts.expenseLimit) ?? 4000;
-      emit(ExpenseLoadedlState(
-          mExpenses:
-              filterExpenses(mExp: expenses, filterType: event.filtertype),expenseLimit: ExpenseLimit(mExp: expenses),prefsLimit: limit));
-    });
-on<Setexpenselimit>((event,emit)async{
-
-  emit(ExpenseLoadingState());
-  SharedPreferences Prefs = await SharedPreferences.getInstance();
-  bool check = await Prefs.setDouble(AppConstansts.expenseLimit, event.limit);
-
-  double limit = Prefs.getDouble(AppConstansts.expenseLimit) ?? 4000;
-  var expenses = await dbhelper.fetchExpense();
-
-  if(check){
-    ExpenseLoadedlState(mExpenses: filterExpenses(mExp: expenses), expenseLimit: ExpenseLimit(mExp: expenses),prefsLimit: limit);
-  }
-  else{
-    ExpenseErrorState(errorMes: "Something went wrong Limit did't add");
-  }
-});
   }
 }

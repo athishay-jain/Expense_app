@@ -45,6 +45,10 @@ dependencies:
   keyboard_avoider: ^0.2.0
   dropdown_button2: ^2.3.9
   fl_chart: ^0.71.0
+  firebase_core: ^3.15.1
+  firebase_auth: ^5.6.2
+  cloud_firestore: ^5.6.11
+  google_sign_in:  ^6.1.5
 
 
 flutter_native_splash:

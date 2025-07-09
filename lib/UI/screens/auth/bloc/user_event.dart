@@ -1,4 +1,5 @@
-import 'package:expance_app/Local/Models/user_model.dart';
+
+import '../../../../Online/Models/user_model.dart';
 
 abstract class UserEvent{}
 class RegisterUserEvent extends UserEvent{
@@ -10,4 +11,9 @@ class AuthenticateUserEvent extends UserEvent{
   String password;
   AuthenticateUserEvent({required this.email, required this.password});
 }
-class GetIntialUserData extends UserEvent{}
+class GoogleAuthenticateUser extends UserEvent{
+
+}
+class GetInitialUserData extends UserEvent{
+
+}

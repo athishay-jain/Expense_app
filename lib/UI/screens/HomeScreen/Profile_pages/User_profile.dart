@@ -1,9 +1,9 @@
 import 'package:expance_app/UI/CutomWidget/ExText.dart';
-import 'package:expance_app/UI/screens/login/bloc/user_bloc.dart';
-import 'package:expance_app/UI/screens/login/bloc/user_event.dart';
-import 'package:expance_app/UI/screens/login/bloc/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../auth/bloc/user_bloc.dart';
+import '../../auth/bloc/user_state.dart';
 
 class UserProfile extends StatefulWidget{
   @override
@@ -24,7 +24,6 @@ class _UserProfileState extends State<UserProfile> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    context.read<UserBloc>().add(GetIntialUserData());
   }
   @override
   Widget build(BuildContext context) {
@@ -40,9 +39,9 @@ class _UserProfileState extends State<UserProfile> {
         }
         if(state is UserLoadedState){
           var userData = state.userData;
-          nameController.text = userData[0].user_name;
-          mobNumController.text = userData[0].user_mobile;
-          emailController.text = userData[0].user_email;
+          nameController.text = userData.user_name;
+          mobNumController.text = userData.user_mobile;
+          emailController.text = userData.user_email;
           return Column(
             children: [
               SizedBox(

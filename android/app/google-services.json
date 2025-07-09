@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "695366952536",
+    "project_id": "expo-expense-app-f3cc4",
+    "storage_bucket": "expo-expense-app-f3cc4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:695366952536:android:c91565747afb22d87b4c2d",
+        "android_client_info": {
+          "package_name": "com.example.expance_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "695366952536-4ghie7vnkef0s8j8vmro8v8e66qn34m9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.expance_app",
+            "certificate_hash": "87c01484d95f2da91a4c1a62039ed6d2503e7c30"
+          }
+        },
+        {
+          "client_id": "695366952536-c47vbbqecqv0sd3c9v9699s4g8evuf9e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLWr_shfYqY3bLsGC0NoEHeoDBUC2KzMQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "695366952536-c47vbbqecqv0sd3c9v9699s4g8evuf9e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "695366952536-2a60qu0nkkbvhsmerg1fqp9fp73upcco.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.expanceApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

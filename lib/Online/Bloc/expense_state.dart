@@ -1,11 +1,13 @@
-import 'package:expance_app/Local/Models/filterExpenseModel.dart';
+
+
+import '../Models/filterExpenseModel.dart';
 
 abstract class ExpenseState {}
 
 class ExpenseIntialState extends ExpenseState {}
 
 class ExpenseLoadingState extends ExpenseState {}
-
+class ExpenseSuccessState extends ExpenseState{}
 class ExpenseLoadedlState extends ExpenseState {
   List<FilterdExpenseModel> mExpenses;
   List<FilterdExpenseModel> expenseLimit;

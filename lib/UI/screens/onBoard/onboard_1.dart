@@ -1,7 +1,8 @@
 import 'package:expance_app/UI/CutomWidget/ExText.dart';
 import 'package:expance_app/UI/screens/HomeScreen/HomePage.dart';
-import 'package:expance_app/UI/screens/login/Login_page.dart';
 import 'package:flutter/material.dart';
+
+import '../auth/Login_page.dart';
 
 class OnboardingScreen extends StatefulWidget {
   @override

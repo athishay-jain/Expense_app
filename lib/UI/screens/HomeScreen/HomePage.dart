@@ -85,7 +85,7 @@ class _HomePageState extends State<HomePage> {
             context,
             PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) =>
-                  AddExpense(),
+                  AddExpense(isUpdate: false,),
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
                 var begin = Offset(0, 1);

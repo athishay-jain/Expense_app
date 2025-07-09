@@ -1,11 +1,12 @@
 import 'package:expance_app/UI/CutomWidget/ExText.dart';
 import 'package:expance_app/UI/screens/HomeScreen/HomePage.dart';
-import 'package:expance_app/UI/screens/login/bloc/user_bloc.dart';
-import 'package:expance_app/UI/screens/login/bloc/user_event.dart';
-import 'package:expance_app/UI/screens/login/bloc/user_state.dart';
-import 'package:expance_app/UI/screens/login/singUp.dart';
+import 'package:expance_app/UI/screens/auth/singUp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'bloc/user_bloc.dart';
+import 'bloc/user_event.dart';
+import 'bloc/user_state.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -14,7 +15,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool ObscureText = true;
-  bool isloading = false;
+  bool isLoading = false;
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -122,14 +123,14 @@ class _LoginPageState extends State<LoginPage> {
           ),
           BlocListener<UserBloc, UserState>(
             listener: (context, state) {
-         /*     if (state is UserLoadingState) {
-                isloading = true;
+              if (state is UserLoadingState) {
+                isLoading = true;
                 setState(() {
 
                 });
-              }*/
+              }
               if (state is UserSuccessState) {
-                isloading = false;
+                isLoading = false;
                 ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                         content: Text("User Login Successful !!")));
@@ -140,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
                     ));
               }
               if (state is UserFailureState) {
-                isloading = false;
+                isLoading = false;
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text(state.errorMesg)));
                 setState(() {
@@ -149,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
               }
 
             },
-            child:isloading ? Row(
+            child:isLoading ? Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircularProgressIndicator(color: Color(0xfffb56a2),),
@@ -232,9 +233,44 @@ class _LoginPageState extends State<LoginPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Image.asset(
-                "Assets/Images/google-color-icon.png",
-                scale: 12,
+              BlocListener<UserBloc, UserState>(
+                listener: (context, state) {
+                  if (state is UserLoadingState) {
+                    isLoading = true;
+                    setState(() {
+
+                    });
+                  }
+                  if (state is UserSuccessState) {
+                    isLoading = false;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text("User Login Successful !!")));
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomePage(),
+                        ));
+                  }
+                  if (state is UserFailureState) {
+                    isLoading = false;
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(state.errorMesg)));
+                    setState(() {
+
+                    });
+                  }
+
+                },
+                child: GestureDetector(
+                  onTap: (){
+                    context.read<UserBloc>().add(GoogleAuthenticateUser());
+                  },
+                  child: Image.asset(
+                    "Assets/Images/google-color-icon.png",
+                    scale: 12,
+                  ),
+                ),
               ),
               Image.asset(
                 "Assets/Images/facebook-round-color-icon.png",

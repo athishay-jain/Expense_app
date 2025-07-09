@@ -1,8 +1,4 @@
-
-import 'package:expance_app/Local/Bloc/expense_bloc.dart';
-import 'package:expance_app/Local/Bloc/expense_event.dart';
-import 'package:expance_app/Local/Bloc/expense_state.dart';
-import 'package:expance_app/Local/Models/expense_model.dart';
+import 'package:expance_app/Online/Bloc/expense_bloc.dart';
 import 'package:expance_app/UI/CutomWidget/CustomDatepicker.dart';
 import 'package:expance_app/UI/CutomWidget/ExText.dart';
 import 'package:expance_app/app_constants.dart';
@@ -10,12 +6,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../Online/Bloc/expense_event.dart';
+import '../../../Online/Bloc/expense_state.dart';
+import '../../../Online/Models/expense_model.dart';
 import '../../CutomWidget/customSelecot.dart';
 
 class AddExpense extends StatefulWidget {
-  @override
-  State<AddExpense> createState() => _AddExpenseState();
-}
+  bool isUpdate;
+  ExpenseModel? expense;
+AddExpense({required this.isUpdate,this.expense});
+
+@override
+State<AddExpense> createState() => _AddExpenseState();}
 
 class _AddExpenseState extends State<AddExpense> {
   bool selector = true;
@@ -33,7 +35,12 @@ class _AddExpenseState extends State<AddExpense> {
     }
     setState(() {});
   }
-
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _checkUpdate();
+  }
   void _handelDate(DateTime date) {
     currentdate = date;
   }
@@ -42,7 +49,15 @@ class _AddExpenseState extends State<AddExpense> {
   bool showCategory = false;
 
   bool isloading = false;
-
+  void _checkUpdate(){
+    if(widget.isUpdate){
+      selector = widget.expense?.expence_type==1?true:false;
+      amountController.text = widget.expense!.expance_amount.toString();
+      titleController.text = widget.expense!.expance_title;
+      descriptionController.text = widget.expense!.expance_description;
+      selectedCategory = widget.expense!.expence_type;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     print("Curremt date form Datepicker is :$currentdate");
@@ -133,11 +148,11 @@ class _AddExpenseState extends State<AddExpense> {
                   SizedBox(
                     width: 360,
                     child: TextFormField(
-                      validator: (value){
-                        if(value == null || value.isEmpty){
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
                           return "Amount is required";
                         }
-                        else{
+                        else {
                           return null;
                         }
                       },
@@ -164,7 +179,7 @@ class _AddExpenseState extends State<AddExpense> {
                           ),
                         ),
                         contentPadding:
-                            EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+                        EdgeInsets.symmetric(vertical: 14, horizontal: 20),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20),
                           borderSide: BorderSide(
@@ -180,8 +195,8 @@ class _AddExpenseState extends State<AddExpense> {
                           ),
                         ),
                         errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          borderSide: BorderSide(color: Colors.red.shade700)
+                            borderRadius: BorderRadius.circular(25),
+                            borderSide: BorderSide(color: Colors.red.shade700)
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25),
@@ -194,7 +209,7 @@ class _AddExpenseState extends State<AddExpense> {
                   ),
                   Padding(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
+                    const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
                     child: TextFormField(
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -220,12 +235,12 @@ class _AddExpenseState extends State<AddExpense> {
                         focusedErrorBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(18),
                           borderSide:
-                              BorderSide(color: Color(0xfffd559e), width: 2),
+                          BorderSide(color: Color(0xfffd559e), width: 2),
                         ),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(18),
                             borderSide:
-                                BorderSide(color: Color(0xfffd559e), width: 2)),
+                            BorderSide(color: Color(0xfffd559e), width: 2)),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(18),
                         ),
@@ -237,12 +252,12 @@ class _AddExpenseState extends State<AddExpense> {
                   ),
                   Padding(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
+                    const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
                     child: TextFormField(
-                      validator: (value){
-                        if(value == null || value.isEmpty){
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
                           return "Description is required";
-                        }else{
+                        } else {
                           return null;
                         }
                       },
@@ -263,12 +278,12 @@ class _AddExpenseState extends State<AddExpense> {
                         focusedErrorBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(18),
                           borderSide:
-                              BorderSide(color: Color(0xfffd559e), width: 2),
+                          BorderSide(color: Color(0xfffd559e), width: 2),
                         ),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(18),
                             borderSide:
-                                BorderSide(color: Color(0xfffd559e), width: 2)),
+                            BorderSide(color: Color(0xfffd559e), width: 2)),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(18),
                         ),
@@ -309,11 +324,11 @@ class _AddExpenseState extends State<AddExpense> {
                                     child: GridView.builder(
                                         itemCount: selector
                                             ? AppConstansts
-                                                .expenseCategoryItems.length
+                                            .expenseCategoryItems.length
                                             : AppConstansts
-                                                .incomeCategoryItems.length,
+                                            .incomeCategoryItems.length,
                                         gridDelegate:
-                                            SliverGridDelegateWithFixedCrossAxisCount(
+                                        SliverGridDelegateWithFixedCrossAxisCount(
                                           crossAxisCount: 3,
                                           mainAxisSpacing: 20,
                                           crossAxisSpacing: 20,
@@ -335,36 +350,36 @@ class _AddExpenseState extends State<AddExpense> {
                                                   overlayColor: Colors.pink,
                                                   shape: RoundedRectangleBorder(
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              15))),
+                                                      BorderRadius.circular(
+                                                          15))),
                                               child: Column(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.center,
+                                                MainAxisAlignment.center,
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
                                                   Image.asset(
                                                     selector
                                                         ? AppConstansts
-                                                                .expenseCategoryItems[
-                                                            index]["icon"]
+                                                        .expenseCategoryItems[
+                                                    index]["icon"]
                                                         : AppConstansts
-                                                                .incomeCategoryItems[
-                                                            index]["icon"],
+                                                        .incomeCategoryItems[
+                                                    index]["icon"],
                                                     scale: 10,
                                                   ),
                                                   Extext(
                                                     data: selector
                                                         ? AppConstansts
-                                                                .expenseCategoryItems[
-                                                            index]["title"]
+                                                        .expenseCategoryItems[
+                                                    index]["title"]
                                                         : AppConstansts
-                                                                .incomeCategoryItems[
-                                                            index]["title"],
+                                                        .incomeCategoryItems[
+                                                    index]["title"],
                                                     size: 13,
                                                     fwight: FontWeight.w600,
                                                     align: TextAlign.center,
                                                     textColor:
-                                                        Color(0xfffb56a2),
+                                                    Color(0xfffb56a2),
                                                   )
                                                 ],
                                               ),
@@ -390,56 +405,150 @@ class _AddExpenseState extends State<AddExpense> {
                     child: selectedCategory >= 0
                         ? Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Image.asset(
-                                selector
-                                    ? AppConstansts.expenseCategoryItems[
-                                        selectedCategory]["icon"]
-                                    : AppConstansts.incomeCategoryItems[
-                                        selectedCategory]["icon"],
-                                scale: 10,
-                              ),
-                              SizedBox(
-                                width: 15,
-                              ),
-                              Extext(
-                                data: selector
-                                    ? AppConstansts.expenseCategoryItems[
-                                        selectedCategory]["title"]
-                                    : AppConstansts.incomeCategoryItems[
-                                        selectedCategory]["title"],
-                                size: 14,
-                                fwight: FontWeight.bold,
-                                align: TextAlign.center,
-                              )
-                            ],
-                          )
+                      children: [
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Image.asset(
+                          selector
+                              ? AppConstansts.expenseCategoryItems[
+                          selectedCategory]["icon"]
+                              : AppConstansts.incomeCategoryItems[
+                          selectedCategory]["icon"],
+                          scale: 10,
+                        ),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Extext(
+                          data: selector
+                              ? AppConstansts.expenseCategoryItems[
+                          selectedCategory]["title"]
+                              : AppConstansts.incomeCategoryItems[
+                          selectedCategory]["title"],
+                          size: 14,
+                          fwight: FontWeight.bold,
+                          align: TextAlign.center,
+                        )
+                      ],
+                    )
                         : Column(
-                            children: [
-                              SizedBox(
-                                height: 15,
-                              ),
-                              Icon(
-                                Icons.add,
-                                size: 50,
-                                color: Color(0xfffb56a2),
-                              ),
-                              Extext(
-                                data: "Select Category",
-                                size: 14,
-                                fwight: FontWeight.bold,
-                                align: TextAlign.center,
-                              )
-                            ],
-                          ),
+                      children: [
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Icon(
+                          Icons.add,
+                          size: 50,
+                          color: Color(0xfffb56a2),
+                        ),
+                        Extext(
+                          data: "Select Category",
+                          size: 14,
+                          fwight: FontWeight.bold,
+                          align: TextAlign.center,
+                        )
+                      ],
+                    ),
                   ),
                   SizedBox(
                     height: 40,
                   ),
-                  Row(
+                  widget.isUpdate?Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      OutlinedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Color(0xfffb56a2),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 30, vertical: 5),
+                            side: BorderSide(
+                              color: Color(0xfffb56a2),
+                            ),
+                          ),
+                          child: Extext(
+                              data: "Delete",
+                              size: 20,
+                              fwight: FontWeight.w600)),
+                      BlocListener<ExpenseBloc, ExpenseState>(
+                        listener: (context, state) {
+                          if (state is ExpenseLoadingState) {
+                            isloading = true;
+                            setState(() {});
+                          }
+                          if (state is ExpenseSuccessState) {
+                            isloading = false;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text("Transaction added"),
+                              ),
+                            );
+                            Navigator.pop(context);
+                          }
+                          if (state is ExpenseErrorState) {
+                            isloading = false;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(state.errorMes),
+                              ),
+                            );
+                            setState(() {});
+                          }
+                        },
+                        child: ElevatedButton(
+                            onPressed: () async {
+                              /// get last balance from prefs and set to Expense model
+                              SharedPreferences Prefs = await SharedPreferences
+                                  .getInstance();
+                              double lastBalance = await Prefs.getDouble(
+                                  AppConstansts.lastBalance) ?? 0;
+
+                              /// check if expense or income
+                              if (selector) {
+                                lastBalance = lastBalance -
+                                    double.parse(amountController.text);
+                              } else {
+                                lastBalance +=
+                                    double.parse(amountController.text);
+                              }
+
+                              if (formKey.currentState!.validate()) {
+                                context.read<ExpenseBloc>().add(AddExpenseEvent(
+                                    newExpense: ExpenseModel(
+                                        expance_balance: lastBalance,
+                                        expance_title: titleController.text,
+                                        expance_description:
+                                        descriptionController.text,
+                                        expance_amount: double.parse(
+                                            amountController.text),
+                                        expance_category: selector
+                                            ? AppConstansts
+                                            .expenseCategoryItems[
+                                        selectedCategory]["id"]
+                                            : AppConstansts.incomeCategoryItems[
+                                        selectedCategory]["id"],
+                                        expance_date: (currentdate ??
+                                            DateTime.now())
+                                            .millisecondsSinceEpoch.toString(),
+                                        expence_type: selector ? 1 : 0)));
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 40, vertical: 5),
+                              backgroundColor: Color(0xfffb56a2),
+                              foregroundColor: Colors.white,
+                            ),
+                            child: Extext(
+                                data: "Update",
+                                size: 20,
+                                fwight: FontWeight.w600)),
+                      ),
+                    ],
+                  ):Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       OutlinedButton(
@@ -458,14 +567,14 @@ class _AddExpenseState extends State<AddExpense> {
                               data: "Cancel",
                               size: 20,
                               fwight: FontWeight.w600)),
-                      BlocListener<ExpenseBloc , ExpenseState>(
+                      BlocListener<ExpenseBloc, ExpenseState>(
                         listener: (context, state) {
                           if (state is ExpenseLoadingState) {
                             isloading = true;
                             setState(() {});
                           }
-                          if (state is ExpenseLoadedlState) {
-                           isloading = false;
+                          if (state is ExpenseSuccessState) {
+                            isloading = false;
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text("Transaction added"),
@@ -482,36 +591,42 @@ class _AddExpenseState extends State<AddExpense> {
                             );
                             setState(() {});
                           }
-
                         },
                         child: ElevatedButton(
-                            onPressed: () async{
+                            onPressed: () async {
                               /// get last balance from prefs and set to Expense model
-                              SharedPreferences Prefs = await SharedPreferences.getInstance();
-                              double lastBalance = await Prefs.getDouble(AppConstansts.lastBalance) ?? 0;
+                              SharedPreferences Prefs = await SharedPreferences
+                                  .getInstance();
+                              double lastBalance = await Prefs.getDouble(
+                                  AppConstansts.lastBalance) ?? 0;
 
-                             /// check if expense or income
-                              if(selector){
-                                lastBalance = lastBalance - double.parse(amountController.text);
-                              }else{
-                                lastBalance += double.parse(amountController.text);
+                              /// check if expense or income
+                              if (selector) {
+                                lastBalance = lastBalance -
+                                    double.parse(amountController.text);
+                              } else {
+                                lastBalance +=
+                                    double.parse(amountController.text);
                               }
 
                               if (formKey.currentState!.validate()) {
                                 context.read<ExpenseBloc>().add(AddExpenseEvent(
                                     newExpense: ExpenseModel(
-                                      expance_balance: lastBalance,
+                                        expance_balance: lastBalance,
                                         expance_title: titleController.text,
                                         expance_description:
-                                            descriptionController.text,
-                                        expance_amount: double.parse(amountController.text),
+                                        descriptionController.text,
+                                        expance_amount: double.parse(
+                                            amountController.text),
                                         expance_category: selector
                                             ? AppConstansts
-                                                    .expenseCategoryItems[
-                                                selectedCategory]["id"]
+                                            .expenseCategoryItems[
+                                        selectedCategory]["id"]
                                             : AppConstansts.incomeCategoryItems[
-                                                selectedCategory]["id"],
-                                        expance_date: (currentdate ?? DateTime.now()).millisecondsSinceEpoch.toString(),
+                                        selectedCategory]["id"],
+                                        expance_date: (currentdate ??
+                                            DateTime.now())
+                                            .millisecondsSinceEpoch.toString(),
                                         expence_type: selector ? 1 : 0)));
                               }
                             },
@@ -527,7 +642,7 @@ class _AddExpenseState extends State<AddExpense> {
                                 fwight: FontWeight.w600)),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
