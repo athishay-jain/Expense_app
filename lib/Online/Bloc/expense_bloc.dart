@@ -16,7 +16,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     on<AddExpenseEvent>((event, emit) async {
       emit(ExpenseLoadingState());
     try{
-      DocumentReference docRef= await firebase.addData(newExpense: event.newExpense);
+      await firebase.addData(newExpense: event.newExpense);
         emit(ExpenseSuccessState());
       await emit.forEach(
         firebase.queryExpense(),
@@ -135,9 +135,6 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
 
     List<FilterdExpenseModel> FiltredData = [];
 
-    List<String> uniqueCat = [];
-    List<String> uniqueexp = [];
-    Map<String, List<String>> uniqueCats = {};
 
     DateFormat df = DateFormat();
     if (filterType == 1) {
